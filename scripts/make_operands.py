@@ -104,16 +104,26 @@ def make_struct_kernels(n, seed):
 
 
 def make_noise(n, seed):
-    """Random +-1 at scales {2,4,8,16}; k divides 16, so block-repeat is exact."""
+    """n distinct random +-1 patterns at scales {2,4,8,16}; k divides 16, so
+    block-repeat is exact. Scale 2 has only 16 patterns, so repeats are redrawn."""
     rng = np.random.default_rng(seed)
-    X = np.empty((n, 16, 16), np.float32)
-    ks = rng.choice([2, 4, 8, 16], n)
-    for k in (2, 4, 8, 16):
-        m = ks == k
-        if m.any():
-            p = rng.integers(0, 2, (int(m.sum()), k, k)).astype(np.float32) * 2 - 1
-            X[m] = np.repeat(np.repeat(p, 16 // k, 1), 16 // k, 2)
-    return X
+
+    def draw(n):
+        X = np.empty((n, 16, 16), np.float32)
+        ks = rng.choice([2, 4, 8, 16], n)
+        for k in (2, 4, 8, 16):
+            m = ks == k
+            if m.any():
+                p = rng.integers(0, 2, (int(m.sum()), k, k)).astype(np.float32) * 2 - 1
+                X[m] = np.repeat(np.repeat(p, 16 // k, 1), 16 // k, 2)
+        return X
+
+    X = draw(n)
+    while True:
+        _, keep = np.unique(X.reshape(n, -1), axis=0, return_index=True)
+        if len(keep) == n:
+            return X
+        X = np.concatenate([X[np.sort(keep)], draw(n - len(keep))])
 
 
 def make_inputs(n, train, seed, frac_cifar=0.45, frac_emnist=0.45):

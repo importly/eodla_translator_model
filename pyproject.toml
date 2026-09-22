@@ -1,0 +1,26 @@
+[project]
+name = "eodla-translator-model"
+version = "0.1.0"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "h5py>=3.16.0",
+    "matplotlib>=3.11.1",
+    "numpy>=2.5.2",
+    "pillow>=12.3.0",
+    "scipy>=1.11",
+    "torch==2.6.0",
+    "torchvision==0.21.0",
+    "tqdm>=4.70.0",
+]
+
+[tool.uv]
+package = false
+
+[[tool.uv.index]]
+name = "pytorch-cu124"
+url = "https://download.pytorch.org/whl/cu124"
+explicit = true
+
+[tool.uv.sources]
+torch = [{ index = "pytorch-cu124" }]
+torchvision = [{ index = "pytorch-cu124" }]

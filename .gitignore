@@ -1,0 +1,16 @@
+data/
+runs/
+out/
+
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+
+# editors / OS
+.DS_Store
+.idea/
+.vscode/
+dist/
+build/
+.peak

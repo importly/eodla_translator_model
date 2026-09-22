@@ -30,7 +30,7 @@ def check(name, ok, detail=""):
 d = np.load(DATA / "operands.npz")
 op_in, op_ker, op_lab = torch.from_numpy(d["inputs"]), torch.from_numpy(d["kernels"]), d["labels"]
 st_ker = torch.from_numpy(d["struct_kernels"])
-n_train, n_val = int(d["n_train"]), int(d["n_val"])
+n_train, n_val, n_ts = int(d["n_train"]), int(d["n_val"]), int(d["n_train_struct"])
 t0 = n_train + n_val
 SPLITS = {   # input pool [lo, hi), kernel table, kernel pool [klo, khi)
     "train":  (0, n_train, op_ker, 0, n_train),
@@ -80,9 +80,10 @@ for split, (lo, hi, ker, klo, khi) in SPLITS.items():
         check("conv24 == conv2d(x, w)", err < 1e-3, f"max abs err {err:.2e}")
 
         # the OG 6x6 scheme forces rows/cols (0,1) (3,4) (6,7) equal in 100% of kernels.
-        # struct kernels are smooth on purpose, so they are exempt
+        # struct kernels, and train kernels [0, n_ts), are structured on purpose - exempt
         if not struct:
-            dup = float(np.mean([(w[:, i, :] == w[:, j, :]).all(1).mean()
+            wu = w[kk[s] >= n_ts]
+            dup = float(np.mean([(wu[:, i, :] == wu[:, j, :]).all(1).mean()
                                  for i, j in ((0, 1), (3, 4), (6, 7))]))
             check("kernels use all 81 dof", dup < 0.05,
                   f"forced-equal rows {dup*100:.2f}%  (6x6 = 100%, chance {2**-9*100:.2f}%)")

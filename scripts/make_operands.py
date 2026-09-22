@@ -4,7 +4,8 @@
 sliced into contiguous pools:
     train [0, n_train)   val [n_train, +N_VAL)   test [.., n)
 plus struct_kernels, held-out kernel families only the struct split draws from - see
-README.
+README. The first n_train_struct train kernels come from those families too, minus
+HELD_OUT.
 """
 import sys, pathlib
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
@@ -31,6 +32,8 @@ FRAC_CIFAR  = 0.45
 FRAC_EMNIST = 0.45        # remainder is random patterns
 N_STRUCT    = 2_000       # kernels per family in the struct split
 STRUCT      = ("uniform", "density", "smooth", "grating")     # struct_family 0..3
+FRAC_STRUCT = 0.20        # of train kernels, from the struct families - see README
+HELD_OUT    = "smooth"    # the one family training never sees
 
 
 class Transpose:
@@ -165,8 +168,23 @@ n = len(X)
 n_train = n - N_VAL - N_TEST
 # the control is ordinary test kernels, so the struct split never touches training ones
 SK = np.concatenate([W[n_train + N_VAL:][:N_STRUCT], make_struct_kernels(N_STRUCT, SEED + 2)])
+
+# the first n_ts train kernels come from the struct families except HELD_OUT, skipping
+# any the struct split or val/test already has
+fams = [s for s in STRUCT[1:] if s != HELD_OUT]
+per = int(FRAC_STRUCT * n_train) // len(fams)
+TK = make_struct_kernels(2 * per, SEED + 3).reshape(3, 2 * per, 9, 9)
+seen = {k.tobytes() for k in np.concatenate([SK, W[n_train:]])}
+picked = []
+for s in fams:
+    K = [k for k in TK[STRUCT.index(s) - 1] if k.tobytes() not in seen][:per]
+    seen.update(k.tobytes() for k in K)
+    picked += K
+n_ts = len(picked)
+W[:n_ts] = np.stack(picked)
+
 np.savez_compressed(DATA / "operands.npz", inputs=X, kernels=W, labels=L,
-                    n_train=n_train, n_val=N_VAL, n_test=N_TEST,
+                    n_train=n_train, n_val=N_VAL, n_test=N_TEST, n_train_struct=n_ts,
                     struct_kernels=SK, struct_names=np.array(STRUCT),
                     struct_family=np.repeat(np.arange(len(STRUCT)), N_STRUCT))
 
@@ -174,3 +192,4 @@ src = L[:, 1].astype(int)
 print(f"{n} operands   train [0,{n_train})  val [{n_train},{n_train+N_VAL})  "
       f"test [{n_train+N_VAL},{n})")
 print(f"  CIFAR {(src==1).sum()}  EMNIST {(src==0).sum()}  noise {(src==2).sum()}")
+print(f"  train kernels [0,{n_ts}) from {'/'.join(fams)}, {HELD_OUT} held out")

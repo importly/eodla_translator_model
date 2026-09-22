@@ -3,7 +3,8 @@
 gen_struct.h5 is test inputs x four kernel families; 'uniform' is ordinary held-out
 test kernels, the control. Every row carries two noise draws, so each family's floor
 is measured on its own rows. 'vs uniform' is a family's x-floor over the control's:
-~1 means the surrogate generalises to that kind of kernel. See README.
+~1 means the surrogate generalises to that kind of kernel. A second table splits each
+family by kernel pixels on. See README.
 
     uv run python scripts/eval_struct.py runs/v1/model.pt [more.pt ...]
 """
@@ -48,3 +49,15 @@ for p in a.ckpts:
         m = fam == k
         print(f"  {name:8s} {int(m.sum()):6d} {mse[m].mean():9.6f} {floor[m].mean():9.6f} "
               f"{xf[k]:7.1f}x {xf[k] / xf[0]:10.2f}")
+
+    # same 'vs uniform', split by how many of the 81 kernel pixels are on (rows)
+    on = (w > 0).flatten(1).sum(1)
+    edges = [0, 10, 20, 30, 40, 50, 60, 70, 82]
+    print(f"\n  {'on':8s}" + "".join(f"{n:>14s}" for n in names))
+    for lo, hi in zip(edges[:-1], edges[1:]):
+        cells = []
+        for k in range(len(names)):
+            m = (fam == k) & (on >= lo) & (on < hi)
+            n = int(m.sum())
+            cells.append(f"{mse[m].mean() / floor[m].mean() / xf[0]:.2f} ({n})" if n >= 20 else "")
+        print(f"  {f'{lo}-{hi - 1}':8s}" + "".join(f"{c:>14s}" for c in cells))

@@ -25,10 +25,10 @@ INK, MUTED, GRID = "#1f2933", "#7b8794", "#e4e7eb"
 BLUE, RUST = "#3b6ea5", "#a5643b"        # val, train - same colours as final.py
 
 FLOOR = {  # per-pixel noise variance, measured by reference/analysis/floor.py
-         # STALE: these are the pre-regeneration numbers. Re-run floor.py.
-    (12, "minmax"): 0.000074, (12, "zscore"): 0.001511, (12, "robust"): 0.000104,
-    (24, "minmax"): 0.000214, (24, "zscore"): 0.005320, (24, "robust"): 0.000285,
-    (48, "minmax"): 0.000536, (48, "zscore"): 0.020325, (48, "robust"): 0.000949,
+         # 2026-09-23, event camera, pilot3 data on the cluster
+    (12, "minmax"): 0.000003, (12, "zscore"): 0.000053, (12, "robust"): 0.000004,
+    (24, "minmax"): 0.000010, (24, "zscore"): 0.000174, (24, "robust"): 0.000012,
+    (48, "minmax"): 0.000031, (48, "zscore"): 0.000637, (48, "robust"): 0.000040,
 }
 
 

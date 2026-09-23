@@ -49,7 +49,7 @@ def cfg_with(**kw):
     return c
 
 
-def stage(name, grid, bundle_kw=None, epochs=None, pick_key=("test", "mse")):
+def stage(name, grid, bundle_kw=None, epochs=None, pick_key=("val", "mse")):
     """grid: list of (label, cfg_overrides). Returns winner label + rows."""
     global best
     path = OUT / f"pipe_{name}.json"
@@ -85,10 +85,11 @@ def stage(name, grid, bundle_kw=None, epochs=None, pick_key=("test", "mse")):
         timings[name] = (time.time() - ts) / 60
     rows.sort(key=lambda r: r[pick_key[0]][pick_key[1]])
     win = rows[0]
-    print(f"\n>>> {name} winner: {win['name']}  test mse {win['test']['mse']:.6f}  "
-          f"({win['test_over_floor']:.1f}x floor)", flush=True)
+    print(f"\n>>> {name} winner: {win['name']}  val mse {win['val']['mse']:.6f}  "
+          f"test mse {win['test']['mse']:.6f}  ({win['test_over_floor']:.1f}x floor)", flush=True)
     for r in rows:
-        print(f"    {r['name']:>18s}  {r['test']['mse']:.6f}  {r['test_over_floor']:6.1f}x  "
+        print(f"    {r['name']:>18s}  val {r['val']['mse']:.6f}  test {r['test']['mse']:.6f}  "
+              f"{r['test_over_floor']:6.1f}x  "
               f"gap {r['gap_train_val']:.1f}x  {r['params']/1e6:.2f}M  {r['minutes']:.1f} min")
     # adopt winner's config fields
     wc = dict(win["cfg"]); wc["model_kw"] = win.get("model_kw", {})

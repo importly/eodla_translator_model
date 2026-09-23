@@ -300,8 +300,10 @@ FULL_TRACK = [
     ("fnounet-48",    dict(model="fnounet", model_kw=dict(width=48, fno_layers=3, base=48))),
 ]
 
-# the reps that carry x and w; conv / convscale belong to CONV_TRACK
+# the reps that carry x and w; conv / convscale belong to CONV_TRACK. conv4 is here too:
+# the four unsigned convs determine far more of x and w than their sum does
 FULL_REPS = [
+    ("conv4", dict(rep="conv4")),
     ("ik", dict(rep="ik")),
     ("convik", dict(rep="convik")),
     ("convikscale", dict(rep="convikscale")),

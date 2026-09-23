@@ -185,6 +185,7 @@ W[:n_ts] = np.stack(picked)
 
 np.savez_compressed(DATA / "operands.npz", inputs=X, kernels=W, labels=L,
                     n_train=n_train, n_val=N_VAL, n_test=N_TEST, n_train_struct=n_ts,
+                    held_out=HELD_OUT,
                     struct_kernels=SK, struct_names=np.array(STRUCT),
                     struct_family=np.repeat(np.arange(len(STRUCT)), N_STRUCT))
 

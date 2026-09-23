@@ -40,6 +40,11 @@ SPLITS = {   # input pool [lo, hi), kernel table, kernel pool [klo, khi)
 }
 print(f"operands.npz: {len(op_in)}   " +
       "  ".join(f"{k} [{lo},{hi})" for k, (lo, hi, *_) in SPLITS.items()))
+# dedup makes the pools miss 45/45/10 slightly, so the files are checked against their
+# pool below; the pool itself is checked here, loosely
+for name, (code, want_f) in FRAC.items():
+    got = (op_lab[:, 1] == code).mean()
+    check(f"operands {name} ~{want_f:.0%}", abs(got - want_f) < 0.01, f"{got*100:.2f}%")
 
 patterns = {}
 
@@ -103,12 +108,12 @@ for split, (lo, hi, ker, klo, khi) in SPLITS.items():
         check("pair repeats ~ chance", n - uniq <= max(10, 3 * expect),
               f"{n - uniq} repeats, ~{expect:.0f} expected")
 
-        src = f["label"][:, 1].astype(int)
-        for name, (code, want_f) in FRAC.items():
-            got = int((src == code).sum()) / n
+        src, pool = f["label"][:, 1].astype(int), op_lab[lo:hi, 1].astype(int)
+        for name, (code, _) in FRAC.items():
+            want_f, got = (pool == code).mean(), (src == code).mean()
             tol = 4 * np.sqrt(want_f * (1 - want_f) / n)
-            check(f"{name} ~{want_f:.0%}", abs(got - want_f) <= tol,
-                  f"{got*100:.1f}%  (+-{tol*100:.1f}%)")
+            check(f"{name} matches pool", abs(got - want_f) <= tol,
+                  f"{got*100:.1f}% vs pool {want_f*100:.1f}%  (+-{tol*100:.1f}%)")
 
         patterns[split] = (
             {r.astype(np.int8).tobytes() for r in np.unique(f["input16"][:], axis=0)},

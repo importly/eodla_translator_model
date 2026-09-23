@@ -16,7 +16,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
 import h5py, numpy as np, torch, torch.nn.functional as F
 
 from paths import ROOT, DATA
-from eodla_sim import TorchEODLASim
+from eodla_sim import TorchEODLASim, C, B
 from data import make_conv
 
 CROP, SIZE, FLUSH = 144, 48, 8192
@@ -65,8 +65,10 @@ if "kernel_scheme" not in f.attrs:
                     "created": datetime.datetime.now().isoformat(timespec="seconds"),
                     "git_commit": commit or "uncommitted",
                     "sim_grid": 1080, "sim_camera": 346, "sim_stored_rows": 260,
-                    "sim_photon_peak": 50, "sim_input_grid_px": 300,
-                    "sim_kernel_grid_px": 168, "crop": CROP, "target_size": SIZE})
+                    "sim_camera_model": f"events, combined, C={C} B={B}",
+                    "sim_dmd": "binary, footprint only",
+                    "sim_input_grid_px": 300, "sim_kernel_grid_px": 168,
+                    "crop": CROP, "target_size": SIZE})
 
 done = f["target48"].shape[0]
 todo = max(0, a.n - done)

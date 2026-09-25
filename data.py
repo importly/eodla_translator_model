@@ -5,6 +5,7 @@ sample. Only two things are derived at load, both per-sample and reversible: tar
 is pooled and normalised, and build_input min-max normalises conv24.
 """
 import pathlib
+from typing import Literal
 
 import h5py
 import numpy as np
@@ -56,7 +57,11 @@ def pad_to(a, size):
     return F.pad(a, (d // 2, d - d // 2, d // 2, d - d // 2))
 
 
-def build_input(rep, x, w, conv, size=24):
+Rep = Literal["conv", "conv4", "convscale", "ik", "convik", "convikscale"]
+
+
+def build_input(rep: Rep, x: torch.Tensor, w: torch.Tensor, conv: torch.Tensor,
+                size: int = 24) -> torch.Tensor:
     """Model input from one row's stored arrays. Nothing is looked up or recomputed."""
     conv = conv.unsqueeze(1)
     lo = conv.amin((-2, -1), keepdim=True)
@@ -68,8 +73,8 @@ def build_input(rep, x, w, conv, size=24):
     if rep == "conv4":
         # the four unsigned convolutions the bench forms and subtracts. Their signed
         # sum is the plain conv, so summing loses information; all four keeps it.
-        px = x.clamp(min=0); nx = 1.0 - px
-        pw = w.clamp(min=0); nw = 1.0 - pw
+        px = (1 + x) / 2; nx = 1.0 - px
+        pw = (1 + w) / 2; nw = 1.0 - pw
         B = px.shape[0]
         chans = [F.conv2d(xi.reshape(1, B, 16, 16), wi.unsqueeze(1).flip(-1, -2),
                           padding=8, groups=B).reshape(B, 1, 24, 24)

@@ -13,7 +13,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
 import h5py, numpy as np, torch
 
 from paths import DATA
-from data import IN_CH, build_input, norm_minmax, pool_to
+from data import IN_CH, norm_minmax, pool_to, predict
 from models import build
 
 EDGES = [0, 10, 20, 30, 40, 50, 60, 70, 82]
@@ -40,7 +40,7 @@ def score(f, rows):
         t = norm_minmax(pool_to(t, 24))
         with torch.no_grad():
             for b in range(0, len(t), 512):
-                y = model(build_input(rep, x[b:b + 512], w[b:b + 512], conv[b:b + 512]))[:, 0]
+                y = predict(model, rep, x[b:b + 512], w[b:b + 512], conv[b:b + 512])
                 se.append(((y - t[b:b + 512]) ** 2).mean((-2, -1)))
         on.append((w > 0).flatten(1).sum(1))
     return torch.cat(se), torch.cat(on)

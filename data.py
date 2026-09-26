@@ -95,6 +95,21 @@ def build_input(rep: Rep, x: torch.Tensor, w: torch.Tensor, conv: torch.Tensor,
     raise ValueError(rep)
 
 
+def kernel_sign(w):
+    """(B, 1, 1): +1 for a kernel with at least 41 of its 81 pixels on, else -1.
+    output(-w) = -output(w) exactly, which min-max turns into 1 - t, so every kernel is
+    shown to the model with most pixels on (README, "Kernel sign").
+    """
+    return ((w > 0).flatten(1).sum(1) >= 41).float().mul(2).sub(1).view(-1, 1, 1)
+
+
+def predict(model, rep, x, w, conv):
+    """Surrogate output (B, 24, 24) for any kernel: flipped to +1 sign, then back."""
+    s = kernel_sign(w)
+    y = model(build_input(rep, x, w * s, conv * s))[:, 0]
+    return s * y + (1 - s) / 2
+
+
 IN_CH = {"conv": 1, "conv4": 4, "convscale": 2, "ik": 2, "convik": 3, "convikscale": 4}
 CHUNK = 20_000          # rows per h5 read; keeps the CPU-side transient at ~180 MB
 
@@ -151,15 +166,20 @@ class Bundle:
 
     def batches(self, split, rep, batch_size=256, shuffle=False, limit=None,
                 augment=False, gen=None):
-        """Yield (x, t). augment applies the same dihedral transform to both."""
+        """Yield (x, t), each row with its kernel flipped to +1 sign and t to match
+        (`kernel_sign`); `predict` flips back. augment applies the same dihedral
+        transform to both.
+        """
         s = self.splits[split]
         n = s["t"].shape[0] if limit is None else min(limit, s["t"].shape[0])
         order = torch.randperm(n, device=self.device, generator=gen) if shuffle \
             else torch.arange(n, device=self.device)
         for p in range(0, (n // batch_size) * batch_size, batch_size):
             b = order[p:p + batch_size]
-            x = build_input(rep, s["input16"][b], s["kernel9"][b], s["conv24"][b], self.in_size)
-            t = s["t"][b]
+            w = s["kernel9"][b]
+            sg = kernel_sign(w)
+            x = build_input(rep, s["input16"][b], w * sg, s["conv24"][b] * sg, self.in_size)
+            t = sg * s["t"][b] + (1 - sg) / 2
             if augment:
                 k = int(torch.randint(0, 4, (1,), generator=gen, device=self.device).item())
                 if k:

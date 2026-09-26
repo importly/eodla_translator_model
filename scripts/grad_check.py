@@ -17,7 +17,7 @@ import h5py, numpy as np, torch, torch.nn.functional as F
 
 from paths import DATA
 from eodla_sim import TorchEODLASim
-from data import IN_CH, build_input, make_conv, norm_minmax, pool_to
+from data import IN_CH, make_conv, norm_minmax, pool_to, predict
 from models import build
 
 CROP, R, BATCH = 144, 8, 64
@@ -41,7 +41,7 @@ def conv(x, w):
 
 
 def surrogate(x, w):
-    return model(build_input(rep, x, w, conv(x, w)))[:, 0]
+    return predict(model, rep, x, w, conv(x, w))
 
 
 def ideal(x, w):
@@ -64,7 +64,7 @@ def flips(v):
     return torch.cat([v[None], v[None] * (1 - 2 * torch.eye(len(v), device=v.device))])
 
 
-def predict(f, x, w, readouts):
+def changes(f, x, w, readouts):
     """(R, 81 + 256): each readout's dL/dpixel x (-2 pixel), kernel pixels first."""
     x, w = x.clone().requires_grad_(), w.clone().requires_grad_()
     y = f(x[None], w[None])[0]
@@ -101,7 +101,7 @@ for i in range(len(pick)):
     true = torch.einsum("rhw,phw->rp", readouts, torch.cat([tk[1:], tx]) - tk[0])
     row = []
     for fn in (surrogate, ideal):
-        pred = predict(fn, x, w, readouts)
+        pred = changes(fn, x, w, readouts)
         row += agree(true[:, :81], pred[:, :81]) + agree(true[:, 81:], pred[:, 81:])
     res[int(fam[i])].append(row)
 

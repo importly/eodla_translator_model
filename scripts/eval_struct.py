@@ -13,7 +13,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
 import h5py, numpy as np, torch
 
 from paths import DATA
-from data import IN_CH, build_input, norm_minmax, pool_to
+from data import IN_CH, norm_minmax, pool_to, predict
 from models import build
 
 ap = argparse.ArgumentParser()
@@ -38,7 +38,7 @@ for p in a.ckpts:
     se = []
     with torch.no_grad():
         for s in range(0, len(ta), 512):
-            y = model(build_input(rep, x[s:s + 512], w[s:s + 512], conv[s:s + 512]))[:, 0]
+            y = predict(model, rep, x[s:s + 512], w[s:s + 512], conv[s:s + 512])
             se.append(((y - ta[s:s + 512]) ** 2).mean((-2, -1)))
     mse = torch.cat(se)
 

@@ -95,18 +95,24 @@ def build_input(rep: Rep, x: torch.Tensor, w: torch.Tensor, conv: torch.Tensor,
     raise ValueError(rep)
 
 
-def kernel_sign(w):
-    """(B, 1, 1): +1 for a kernel with at least 41 of its 81 pixels on, else -1.
-    output(-w) = -output(w) exactly, which min-max turns into 1 - t, so every kernel is
-    shown to the model with most pixels on (README, "Kernel sign").
+def signs(x, w):
+    """Per-row signs (B, 1, 1) that flip x and w to their mostly-on side.
+    output(-x, w) = output(x, -w) = -output(x, w) exactly, which min-max turns into
+    1 - t, so the model only ever sees operands with most pixels on (README, "Operand
+    signs"). An input with exactly 128 of 256 on is decided by its top-left pixel.
     """
-    return ((w > 0).flatten(1).sum(1) >= 41).float().mul(2).sub(1).view(-1, 1, 1)
+    on_x = (x > 0).flatten(1).sum(1)
+    sx = (on_x > 128) | ((on_x == 128) & (x[:, 0, 0] > 0))
+    sw = (w > 0).flatten(1).sum(1) >= 41
+    return (sx.float() * 2 - 1).view(-1, 1, 1), (sw.float() * 2 - 1).view(-1, 1, 1)
 
 
 def predict(model, rep, x, w, conv):
-    """Surrogate output (B, 24, 24) for any kernel: flipped to +1 sign, then back."""
-    s = kernel_sign(w)
-    y = model(build_input(rep, x, w * s, conv * s))[:, 0]
+    """Surrogate output (B, 24, 24) for any operands: flipped to their mostly-on side,
+    then back."""
+    sx, sw = signs(x, w)
+    s = sx * sw
+    y = model(build_input(rep, x * sx, w * sw, conv * s))[:, 0]
     return s * y + (1 - s) / 2
 
 
@@ -166,8 +172,8 @@ class Bundle:
 
     def batches(self, split, rep, batch_size=256, shuffle=False, limit=None,
                 augment=False, gen=None):
-        """Yield (x, t), each row with its kernel flipped to +1 sign and t to match
-        (`kernel_sign`); `predict` flips back. augment applies the same dihedral
+        """Yield (x, t), each row with its operands flipped to their mostly-on side and t
+        to match (`signs`); `predict` flips back. augment applies the same dihedral
         transform to both.
         """
         s = self.splits[split]
@@ -176,9 +182,10 @@ class Bundle:
             else torch.arange(n, device=self.device)
         for p in range(0, (n // batch_size) * batch_size, batch_size):
             b = order[p:p + batch_size]
-            w = s["kernel9"][b]
-            sg = kernel_sign(w)
-            x = build_input(rep, s["input16"][b], w * sg, s["conv24"][b] * sg, self.in_size)
+            sx, sw = signs(s["input16"][b], s["kernel9"][b])
+            sg = sx * sw
+            x = build_input(rep, s["input16"][b] * sx, s["kernel9"][b] * sw,
+                            s["conv24"][b] * sg, self.in_size)
             t = sg * s["t"][b] + (1 - sg) / 2
             if augment:
                 k = int(torch.randint(0, 4, (1,), generator=gen, device=self.device).item())

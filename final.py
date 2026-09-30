@@ -2,7 +2,7 @@
 artifact: checkpoint, config, metrics, and prediction figures.
 
 Usage:
-    uv run python final.py --cfg out/best_cfg.json --epochs 60 --tag v1
+    uv run python final.py --cfg out/v3_l1g1_cfg.json --tag v4 --epochs 40 [--seed 1]
 """
 import argparse
 import json
@@ -15,7 +15,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-from data import Bundle
+from data import Bundle, norm_minmax, predict
 from train import run, FLOOR
 
 from paths import ROOT, RUNS
@@ -39,12 +39,12 @@ def style(ax):
 def fig_predictions(model, bundle, rep, path, n=8, seed=0):
     """Grid of n random test samples: conv input, prediction, target, |error|."""
     model.eval()
-    x, t = next(bundle.batches("test", rep, batch_size=512))
-    y = model(x)[:, 0]
+    s = bundle.splits["test"]
+    x, w, conv, t = (s[c][:512] for c in ("input16", "kernel9", "conv24", "t"))
+    y = predict(model, rep, x, w, conv)
     g = torch.Generator().manual_seed(seed)
     idx = torch.randperm(y.shape[0], generator=g)[:n]
-    conv = x[:, 0]
-    rows = [("conv (input)", conv), ("predicted", y), ("target", t),
+    rows = [("conv (input)", norm_minmax(conv)), ("predicted", y), ("target", t),
             ("|error|", (y - t).abs())]
     fig, axes = plt.subplots(len(rows), n, figsize=(1.9 * n, 1.9 * len(rows) + 0.6),
                              constrained_layout=True)
@@ -112,7 +112,7 @@ def fig_persample(model, bundle, rep, path):
 
 
 @torch.no_grad()
-def conv_baseline(bundle, rep):
+def conv_baseline(bundle):
     """Test MSE of handing the normalised conv back as the prediction (the no-model baseline)."""
     se = n = 0
     for x, t in bundle.batches("test", "conv", batch_size=512):
@@ -131,28 +131,24 @@ if __name__ == "__main__":
     args = ap.parse_args()
 
     cfg = json.load(open(ROOT / args.cfg))
-    if "cfg" in cfg:                      # accept a sweep result row directly
-        mk = cfg.get("model_kw", {})
-        cfg = dict(cfg["cfg"]); cfg["model_kw"] = mk
     if args.epochs:
         cfg["epochs"] = args.epochs
     cfg["seed"] = args.seed
-    cfg.pop("limit", None)
 
     outdir = RUNS / args.tag
     outdir.mkdir(parents=True, exist_ok=True)
     cfg["ckpt"] = str(outdir / "model.pt")     # also puts model_curves.png here
 
     print("config:", json.dumps(cfg))
-    b = Bundle(size=24, tnorm="minmax", max_train=args.max_train)
-    rep = cfg.get("rep", "conv")
+    b = Bundle(max_train=args.max_train)
+    rep = cfg["rep"]
 
     t0 = time.time()
     res, model = run(b, cfg, log_every=2)
     res["wall_minutes"] = (time.time() - t0) / 60
 
-    base = conv_baseline(b, rep)
-    floor = FLOOR[(24, "minmax")]
+    base = conv_baseline(b)
+    floor = FLOOR
     res["conv_baseline_test_mse"] = base
     res["improvement_over_baseline"] = base / res["test"]["mse"]
 
@@ -170,6 +166,6 @@ if __name__ == "__main__":
     print(f"noise floor     {floor:.6f}   -> {res['test']['mse']/floor:.2f}x floor")
     print(f"conv baseline   {base:.6f}   -> {base/res['test']['mse']:.1f}x better than baseline")
     print(f"train MSE       {res['train']['mse']:.6f}   gap {res['gap_train_val']:.2f}x")
-    print(f"params {res['params']/1e6:.2f}M   epochs {res['epochs_ran']}   "
+    print(f"params {res['params']/1e6:.2f}M   epochs {cfg['epochs']}   "
           f"{res['wall_minutes']:.1f} min")
     print(f"-> {outdir}")

@@ -6,7 +6,7 @@ is measured on its own rows. 'vs uniform' is a family's x-floor over the control
 ~1 means the surrogate generalises to that kind of kernel. A second table splits each
 family by kernel pixels on. See README.
 
-    uv run python scripts/eval_struct.py runs/v1/model.pt [more.pt ...]
+    uv run python scripts/eval_struct.py runs/v3_l1g1/model.pt [more.pt ...]
 """
 import sys, pathlib, argparse
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))

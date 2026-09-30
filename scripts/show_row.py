@@ -33,7 +33,7 @@ with h5py.File(DATA / f"gen_{A.split}.h5", "r", locking=False) as f:
         d["mse"] = float(((d["convn"] - d["t24"]) ** 2).mean())
         cols.append(d)
 
-floor = FLOOR[(24, "minmax")]
+floor = FLOOR
 
 ROWS = [   # row label, key, cmap, caption
     ("input x\n16x16", "input16", "gray", lambda d: "{-1, +1}"),

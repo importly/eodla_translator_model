@@ -6,7 +6,7 @@ Train x floor in a bin close to the 30-49 bins': the model fits that kind of ker
 large held-out gap there is a data problem. Train x floor high as well: the model or its
 input can't represent it. README, "If a family fails".
 
-    uv run python scripts/fit_check.py runs/pilot3/model.pt [--rows 200000]
+    uv run python scripts/fit_check.py runs/v3_l1g1/model.pt [--rows 200000]
 """
 import sys, pathlib, argparse
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))

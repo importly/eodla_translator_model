@@ -9,7 +9,7 @@ the right way. The same numbers for minmax(conv) - treating the bench as an idea
 convolution - are the baseline the surrogate has to beat. Test MSE cannot see any of
 this; README, "Why the kernels are free 81-bit".
 
-    uv run python scripts/grad_check.py runs/pilot3/model.pt [--rows 32]
+    uv run python scripts/grad_check.py runs/v3_l1g1/model.pt [--rows 32]
 """
 import sys, pathlib, argparse
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))

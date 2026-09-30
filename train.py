@@ -1,10 +1,8 @@
 """Training loop and metrics for the EODLA translator.
 
 Reports MSE against the measured irreducible noise floor, so a run is judged by
-how much of the available headroom it closed rather than by an absolute number
-that depends on target size and normalisation.
+how much of the available headroom it closed.
 """
-import hashlib
 import json
 import math
 import pathlib
@@ -19,17 +17,12 @@ import torch.nn.functional as F
 
 from models import build
 from data import IN_CH
-from paths import RUNS
 
 INK, MUTED, GRID = "#1f2933", "#7b8794", "#e4e7eb"
 BLUE, RUST = "#3b6ea5", "#a5643b"        # val, train - same colours as final.py
 
-FLOOR = {  # per-pixel noise variance, measured by reference/analysis/floor.py
-         # 2026-09-23, event camera, pilot3 data on the cluster
-    (12, "minmax"): 0.000003, (12, "zscore"): 0.000053, (12, "robust"): 0.000004,
-    (24, "minmax"): 0.000010, (24, "zscore"): 0.000174, (24, "robust"): 0.000012,
-    (48, "minmax"): 0.000031, (48, "zscore"): 0.000637, (48, "robust"): 0.000040,
-}
+FLOOR = 0.000010  # per-pixel noise variance of the 24x24 min-max target, measured by
+                  # reference/analysis/floor.py 2026-09-23 (event camera, cluster)
 
 
 def grad_loss(y, t):
@@ -45,7 +38,7 @@ def grad_loss(y, t):
 
 def make_loss(kind, w_grad=0.0):
     """Training objective from a name ('l1' | 'l2' | 'huber') plus w_grad * grad_loss.
-    Note HuberLoss with delta=1 on [0,1] targets is just MSE - kept only for reference.
+    Huber uses delta=0.1: PyTorch's default of 1 on [0,1] targets is just MSE.
     """
     base = {"l1": F.l1_loss, "l2": F.mse_loss,
             "huber": lambda y, t: F.huber_loss(y, t, delta=0.1)}[kind]
@@ -113,126 +106,86 @@ def plot_curves(train_loss, val_loss, val_mse, floor, path, title):
 def run(bundle, cfg, verbose=True, log_every=1):
     """Train one config and return (result_row, model).
 
-    cfg keys: model, model_kw, rep, loss, w_grad, lr, wd, batch, epochs, sched
-    ('onecycle' | 'cosine'), amp, clip, augment, seed, limit, ckpt (optional path).
-    AdamW + OneCycle (no early stop) or cosine (+patience), bf16 autocast with a
-    GradScaler, grad clipping; the best-val checkpoint is restored, test and train
-    metrics evaluated once, and the weights ALWAYS saved (cfg['ckpt'] or an
-    auto-named file under runs/auto/), with <ckpt>_curves.png beside them, redrawn
-    every epoch. The row is what pipeline.py stores per run.
+    cfg keys: model, model_kw, rep, loss, w_grad, lr, wd, batch, epochs, clip, seed,
+    ckpt. AdamW + OneCycle with no early stop (the gains land in the anneal), bf16
+    autocast, grad clipping. The best-val weights are restored, test and train metrics
+    evaluated once, and the weights saved to cfg["ckpt"] with <ckpt>_curves.png beside
+    them, redrawn every epoch.
     """
     dev = bundle.device
-    rep = cfg.get("rep", "conv")
+    rep = cfg["rep"]
     torch.manual_seed(cfg.get("seed", 0))
 
     model = build(cfg["model"], IN_CH[rep], **cfg.get("model_kw", {})).to(dev)
     nparam = sum(p.numel() for p in model.parameters())
 
-    opt = torch.optim.AdamW(model.parameters(), lr=cfg.get("lr", 2e-3),
-                            weight_decay=cfg.get("wd", 1e-4))
-    epochs = cfg.get("epochs", 30)
+    epochs, batch = cfg["epochs"], cfg.get("batch", 256)
+    opt = torch.optim.AdamW(model.parameters(), lr=cfg["lr"], weight_decay=cfg.get("wd", 1e-4))
     sched = torch.optim.lr_scheduler.OneCycleLR(
-        opt, max_lr=cfg.get("lr", 2e-3),
-        total_steps=epochs * bundle.n_batches("train", cfg.get("batch", 256),
-                                              cfg.get("limit")),
-        pct_start=0.15,
-    ) if cfg.get("sched", "onecycle") == "onecycle" else \
-        torch.optim.lr_scheduler.CosineAnnealingLR(opt, T_max=epochs)
+        opt, max_lr=cfg["lr"], total_steps=epochs * bundle.n_batches("train", batch),
+        pct_start=0.15)
+    lossf = make_loss(cfg["loss"], cfg.get("w_grad", 0.0))
 
-    lossf = make_loss(cfg.get("loss", "l1"), cfg.get("w_grad", 0.0))
-    amp = cfg.get("amp", True)
-    scaler = torch.amp.GradScaler("cuda", enabled=amp)
-
-    # ALWAYS save the trained weights. Explicit cfg["ckpt"] wins; otherwise an
-    # auto-named file under runs/auto/ so no trained model is ever thrown away.
-    ck = cfg.get("ckpt")
-    if not ck:
-        key = json.dumps({k: v for k, v in cfg.items() if k != "ckpt"}, sort_keys=True, default=str)
-        ck = str(RUNS / "auto" /
-                 f"{cfg['model']}_{rep}_{hashlib.md5(key.encode()).hexdigest()[:8]}.pt")
-        cfg["ckpt"] = ck
-    pathlib.Path(ck).parent.mkdir(parents=True, exist_ok=True)
-    curves = pathlib.Path(ck).with_name(pathlib.Path(ck).stem + "_curves.png")
+    ck = pathlib.Path(cfg["ckpt"])
+    ck.parent.mkdir(parents=True, exist_ok=True)
+    curves = ck.with_name(ck.stem + "_curves.png")
     if verbose:
         print(f"    curves -> {curves}", flush=True)
 
-    floor = FLOOR[(bundle.size, bundle.tnorm)]
     best = {"mse": float("inf")}
     best_state = None
     hist, train_loss, val_loss = [], [], []
-    stale = 0
     t0 = time.time()
 
     for ep in range(epochs):
         model.train()
         tl, steps = torch.zeros((), device=dev), 0     # summed on device: no sync per step
-        for x, t in bundle.batches("train", rep, batch_size=cfg.get("batch", 256),
-                                   shuffle=True, limit=cfg.get("limit"),
-                                   augment=cfg.get("augment", False)):
+        for x, t in bundle.batches("train", rep, batch_size=batch, shuffle=True):
             opt.zero_grad(set_to_none=True)
-            with torch.amp.autocast("cuda", dtype=torch.bfloat16, enabled=amp):
+            with torch.autocast("cuda", dtype=torch.bfloat16):
                 loss = lossf(model(x)[:, 0], t)
-            scaler.scale(loss).backward()
-            if cfg.get("clip", 1.0):
-                scaler.unscale_(opt)
-                nn.utils.clip_grad_norm_(model.parameters(), cfg["clip"])
-            scaler.step(opt)
-            scaler.update()
-            if cfg.get("sched", "onecycle") == "onecycle":
-                sched.step()
+            loss.backward()
+            nn.utils.clip_grad_norm_(model.parameters(), cfg.get("clip", 1.0))
+            opt.step()
+            sched.step()
             tl += loss.detach()
             steps += 1
-        if cfg.get("sched", "onecycle") != "onecycle":
-            sched.step()
 
         vm = evaluate(model, bundle, "val", rep, lossf=lossf)
         hist.append(vm["mse"])
         train_loss.append(tl.item() / steps)
         val_loss.append(vm["loss"])
-        plot_curves(train_loss, val_loss, hist, floor, curves,
-                    f"{pathlib.Path(ck).stem}   {cfg['model']} / {rep}   epoch {ep + 1}/{epochs}")
+        plot_curves(train_loss, val_loss, hist, FLOOR, curves,
+                    f"{ck.stem}   {cfg['model']} / {rep}   epoch {ep + 1}/{epochs}")
+        flag = ""
         if vm["mse"] < best["mse"] - 1e-9:
             best = vm
             best_state = {k: v.detach().clone() for k, v in model.state_dict().items()}
-            stale = 0
             flag = " *"
-        else:
-            stale += 1
-            flag = ""
         if verbose and (ep % log_every == 0 or flag):
             print(f"    ep {ep:3d}  loss train {train_loss[-1]:.5f} val {val_loss[-1]:.5f}  "
                   f"val mse {vm['mse']:.6f}  psnr {vm['psnr']:5.2f}  "
-                  f"x floor {vm['mse']/floor:6.1f}  lr {opt.param_groups[0]['lr']:.2e}{flag}",
+                  f"x floor {vm['mse']/FLOOR:6.1f}  lr {opt.param_groups[0]['lr']:.2e}{flag}",
                   flush=True)
-        # OneCycle's anneal phase is where the gains land; never cut it short.
-        # Only cosine (which has no built-in end behaviour) uses patience.
-        if cfg.get("sched", "onecycle") != "onecycle" and stale >= cfg.get("patience", 12):
-            if verbose:
-                print(f"    early stop at {ep}")
-            break
 
-    if best_state is not None:
-        model.load_state_dict(best_state)
+    model.load_state_dict(best_state)
     torch.save({"state_dict": model.state_dict(), "cfg": cfg}, ck)
     tm = evaluate(model, bundle, "test", rep)
-    trm = evaluate(model, bundle, "train", rep, batch_size=512, limit=20000)
+    trm = evaluate(model, bundle, "train", rep, limit=20000)
 
     out = {
-        "cfg": {k: v for k, v in cfg.items() if k != "model_kw"},
-        "model_kw": cfg.get("model_kw", {}),
+        "cfg": cfg,
         "params": nparam,
-        "epochs_ran": len(hist),
         "minutes": (time.time() - t0) / 60,
-        "floor": floor,
+        "floor": FLOOR,
         "val": best, "test": tm, "train": trm,
-        "test_over_floor": tm["mse"] / floor,
+        "test_over_floor": tm["mse"] / FLOOR,
         "gap_train_val": best["mse"] / max(trm["mse"], 1e-12),
         "hist": hist, "train_loss": train_loss, "val_loss": val_loss,
-        "ckpt": cfg["ckpt"], "curves": str(curves),
     }
     if verbose:
         print(f"    -> test mse {tm['mse']:.6f}  psnr {tm['psnr']:.2f}  "
-              f"{tm['mse']/floor:.1f}x floor  |  train {trm['mse']:.6f}  "
+              f"{tm['mse']/FLOOR:.1f}x floor  |  train {trm['mse']:.6f}  "
               f"gap {out['gap_train_val']:.1f}x  |  {nparam/1e6:.2f}M  "
               f"{out['minutes']:.1f} min", flush=True)
     return out, model

@@ -1,6 +1,6 @@
-"""Measure the irreducible noise floor per (target size, normalisation).
+"""Measure the irreducible noise floor of the 24x24 min-max target.
 
-Two independent Poisson realisations of the same (input, kernel) differ by
+Two independent noise realisations of the same (input, kernel) differ by
 sqrt(2) x noise, so MSE(a, b) / 2 is the per-pixel noise variance - the best MSE
 any model could achieve. Also reports the conv baseline so the achievable range
 is bracketed at both ends.
@@ -23,7 +23,7 @@ import torch
 import torch.nn.functional as F
 
 from eodla_sim import TorchEODLASim
-from data import NORMS, pool_to, make_conv
+from data import norm_minmax, pool_to, make_conv
 from paths import DATA
 
 K = 96
@@ -69,24 +69,9 @@ def corr(a, b):
 print(f"\nsimulator fidelity on held-out (48x48 raw): "
       f"corr(mine,stored) {corr(a48, o48):+.4f}   corr(a,b) {corr(a48, b48):+.4f}")
 
-print(f"\n{'size':>5s} {'norm':>8s} {'floor MSE':>12s} {'floor PSNR':>11s} "
-      f"{'conv MSE':>10s} {'headroom':>9s}")
-for size in [12, 24, 48]:
-    conv = make_conv(inputs, kernels, ii, kk)
-    if size != 24:
-        conv = F.interpolate(conv, size=(size, size),
-                             mode="area" if size < 24 else "bilinear",
-                             **({} if size < 24 else {"align_corners": False}))
-    for nname, nf in NORMS.items():
-        ta = nf(pool_to(a48, size))
-        tb = nf(pool_to(b48, size))
-        to = nf(pool_to(o48, size))
-        floor = (F.mse_loss(ta, tb) / 2).item()
-        cb = F.mse_loss(nf(conv.squeeze(1)), to).item()
-        psnr = 10 * np.log10(1.0 / floor) if nname != "zscore" else float("nan")
-        print(f"{size:5d} {nname:>8s} {floor:12.6f} {psnr:11.2f} {cb:10.6f} "
-              f"{cb/floor:8.0f}x")
-
-print("\nNote: PSNR assumes data range 1.0, so it is meaningful for minmax/robust only.")
-print("'headroom' = conv-baseline MSE / floor MSE: the factor a perfect model would gain.")
-print("Paste the floor column into train.FLOOR.")
+ta, tb, to = (norm_minmax(pool_to(t, 24)) for t in (a48, b48, o48))
+floor = (F.mse_loss(ta, tb) / 2).item()
+cb = F.mse_loss(norm_minmax(make_conv(inputs, kernels, ii, kk).squeeze(1)), to).item()
+print(f"\nfloor MSE {floor:.6f}   PSNR {10 * np.log10(1.0 / floor):.2f} dB   "
+      f"conv baseline {cb:.6f}   headroom {cb / floor:.0f}x")
+print("Paste the floor MSE into train.FLOOR.")

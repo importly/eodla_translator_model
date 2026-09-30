@@ -1,6 +1,6 @@
-data/
-runs/
-out/
+/data/
+/runs/
+/out/
 
 .venv/
 __pycache__/

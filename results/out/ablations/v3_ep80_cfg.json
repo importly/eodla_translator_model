@@ -1,0 +1,1 @@
+{"model": "resunet", "model_kw": {"base": 96}, "rep": "convikscale", "loss": "l2", "w_grad": 0.5, "lr": 0.001, "wd": 0.0001, "batch": 256, "amp": true, "clip": 1.0, "augment": false, "seed": 0}

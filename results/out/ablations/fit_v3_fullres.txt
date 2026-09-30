@@ -1,0 +1,11 @@
+
+runs/v3_fullres/model.pt   fullres / convikscale   200000 train rows, smooth left out
+  on       train rows  train x held-out rows held-out x    gap
+  0-9            3723   406.6x           518     694.4x   1.71
+  10-19          3794     2.8x           468       2.5x   0.89
+  20-29          4236     2.9x           424       3.2x   1.08
+  30-39         70662     3.1x          1675       3.9x   1.25
+  40-49        103267     3.0x          3058       4.3x   1.44
+  50-59          5999     3.3x           326       2.9x   0.89
+  60-69          3809     2.8x           432       3.9x   1.40
+  70-81          4510   432.7x           580     167.7x   0.39

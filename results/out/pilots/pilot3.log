@@ -1,0 +1,207 @@
+199154 operands   train [0,189154)  val [189154,194154)  test [194154,199154)
+  CIFAR 89459  EMNIST 89695  noise 20000
+  train kernels [0,37830) from density/grating, smooth held out
+test: operands [194154,199154)   have 0, making 10000  (~0.1 GB)   [free81, cifar45/emnist45/noise10]
+  8192/10000   262/s   eta 0 min
+  10000/10000   262/s   eta 0 min
+/md127/home/UFAD/aryanthakur/eodla_translator_model/data/gen_test.h5   0.1 GB
+val: operands [189154,194154)   have 0, making 10000  (~0.1 GB)   [free81, cifar45/emnist45/noise10]
+  8192/10000   262/s   eta 0 min
+  10000/10000   262/s   eta 0 min
+/md127/home/UFAD/aryanthakur/eodla_translator_model/data/gen_val.h5   0.1 GB
+struct: operands [194154,199154)   have 0, making 10000  (~0.2 GB)   [struct, cifar45/emnist45/noise10]
+  8192/10000   131/s   eta 0 min
+  10000/10000   131/s   eta 0 min
+/md127/home/UFAD/aryanthakur/eodla_translator_model/data/gen_struct.h5   0.2 GB
+train: operands [0,189154)   have 0, making 200000  (~2.6 GB)   [free81, cifar45/emnist45/noise10]
+  8192/200000   262/s   eta 12 min
+  16384/200000   262/s   eta 12 min
+  24576/200000   263/s   eta 11 min
+  32768/200000   263/s   eta 11 min
+  40960/200000   263/s   eta 10 min
+  49152/200000   263/s   eta 10 min
+  57344/200000   263/s   eta 9 min
+  65536/200000   263/s   eta 9 min
+  73728/200000   263/s   eta 8 min
+  81920/200000   263/s   eta 7 min
+  90112/200000   263/s   eta 7 min
+  98304/200000   263/s   eta 6 min
+  106496/200000   263/s   eta 6 min
+  114688/200000   263/s   eta 5 min
+  122880/200000   263/s   eta 5 min
+  131072/200000   263/s   eta 4 min
+  139264/200000   263/s   eta 4 min
+  147456/200000   263/s   eta 3 min
+  155648/200000   263/s   eta 3 min
+  163840/200000   263/s   eta 2 min
+  172032/200000   263/s   eta 2 min
+  180224/200000   263/s   eta 1 min
+  188416/200000   263/s   eta 1 min
+  196608/200000   263/s   eta 0 min
+  200000/200000   263/s   eta 0 min
+/md127/home/UFAD/aryanthakur/eodla_translator_model/data/gen_train.h5   2.6 GB
+operands.npz: 199154   train [0,189154)  val [189154,194154)  test [194154,199154)  struct [194154,199154)
+  PASS  operands CIFAR ~45%   44.92%
+  PASS  operands EMNIST ~45%   45.04%
+  PASS  operands noise ~10%   10.04%
+
+gen_train.h5
+  PASS  provenance attrs   free81 cifar45/emnist45/noise10 e9359bf
+  PASS  kernel_scheme is free81   got 'free81'
+  PASS  all columns present
+  PASS  row counts agree   200000 rows
+  PASS  column shapes
+  PASS  ii within pool   [0, 189153]
+  PASS  kk within pool   [0, 189153]
+  PASS  input16 == operands[ii]
+  PASS  kernel9 == operands[kk]
+  PASS  label == operands[ii]
+  PASS  conv24 == conv2d(x, w)   max abs err 0.00e+00
+  PASS  kernels use all 81 dof   forced-equal rows 0.20%  (6x6 = 100%, chance 0.20%)
+  PASS  target48 all finite   0 non-finite
+  PASS  no constant target48   0 flat rows
+  PASS  pair repeats ~ chance   1 repeats, ~1 expected
+  PASS  CIFAR matches pool   45.0% vs pool 44.9%  (+-0.4%)
+  PASS  EMNIST matches pool   45.0% vs pool 45.1%  (+-0.4%)
+  PASS  noise matches pool   10.0% vs pool 10.0%  (+-0.3%)
+
+gen_val.h5
+  PASS  provenance attrs   free81 cifar45/emnist45/noise10 e9359bf
+  PASS  kernel_scheme is free81   got 'free81'
+  PASS  all columns present
+  PASS  row counts agree   10000 rows
+  PASS  column shapes
+  PASS  ii within pool   [189154, 194153]
+  PASS  kk within pool   [189154, 194153]
+  PASS  input16 == operands[ii]
+  PASS  kernel9 == operands[kk]
+  PASS  label == operands[ii]
+  PASS  conv24 == conv2d(x, w)   max abs err 0.00e+00
+  PASS  kernels use all 81 dof   forced-equal rows 0.12%  (6x6 = 100%, chance 0.20%)
+  PASS  target48 all finite   0 non-finite
+  PASS  no constant target48   0 flat rows
+  PASS  pair repeats ~ chance   2 repeats, ~2 expected
+  PASS  CIFAR matches pool   43.9% vs pool 44.8%  (+-2.0%)
+  PASS  EMNIST matches pool   45.0% vs pool 44.5%  (+-2.0%)
+  PASS  noise matches pool   11.1% vs pool 10.7%  (+-1.2%)
+
+gen_test.h5
+  PASS  provenance attrs   free81 cifar45/emnist45/noise10 e9359bf
+  PASS  kernel_scheme is free81   got 'free81'
+  PASS  all columns present
+  PASS  row counts agree   10000 rows
+  PASS  column shapes
+  PASS  ii within pool   [194154, 199153]
+  PASS  kk within pool   [194154, 199152]
+  PASS  input16 == operands[ii]
+  PASS  kernel9 == operands[kk]
+  PASS  label == operands[ii]
+  PASS  conv24 == conv2d(x, w)   max abs err 0.00e+00
+  PASS  kernels use all 81 dof   forced-equal rows 0.22%  (6x6 = 100%, chance 0.20%)
+  PASS  target48 all finite   0 non-finite
+  PASS  no constant target48   0 flat rows
+  PASS  pair repeats ~ chance   1 repeats, ~2 expected
+  PASS  CIFAR matches pool   44.9% vs pool 44.6%  (+-2.0%)
+  PASS  EMNIST matches pool   44.7% vs pool 45.0%  (+-2.0%)
+  PASS  noise matches pool   10.4% vs pool 10.4%  (+-1.2%)
+
+gen_struct.h5
+  PASS  provenance attrs   struct cifar45/emnist45/noise10 e9359bf
+  PASS  kernel_scheme is struct   got 'struct'
+  PASS  all columns present
+  PASS  row counts agree   10000 rows
+  PASS  column shapes
+  PASS  ii within pool   [194154, 199153]
+  PASS  kk within pool   [1, 7997]
+  PASS  input16 == operands[ii]
+  PASS  kernel9 == operands[kk]
+  PASS  label == operands[ii]
+  PASS  conv24 == conv2d(x, w)   max abs err 0.00e+00
+  PASS  target48 all finite   0 non-finite
+  PASS  no constant target48   0 flat rows
+  PASS  target48b all finite   0 non-finite
+  PASS  no constant target48b   0 flat rows
+  PASS  pair repeats ~ chance   1 repeats, ~1 expected
+  PASS  CIFAR matches pool   44.9% vs pool 44.6%  (+-2.0%)
+  PASS  EMNIST matches pool   44.7% vs pool 45.0%  (+-2.0%)
+  PASS  noise matches pool   10.4% vs pool 10.4%  (+-1.2%)
+
+cross-split
+  PASS  train/val inputs disjoint   0 shared
+  PASS  train/val kernels disjoint   0 shared
+  PASS  train/test inputs disjoint   0 shared
+  PASS  train/test kernels disjoint   0 shared
+  PASS  train/struct inputs disjoint   0 shared
+  PASS  train/struct kernels disjoint   0 shared
+
+ALL CHECKS PASSED
+config: {"model": "resunet", "model_kw": {"base": 64}, "rep": "convik", "loss": "l1", "w_grad": 0.5, "lr": 0.002, "wd": 0.0001, "batch": 256, "amp": true, "clip": 1.0, "augment": false, "epochs": 20, "seed": 0, "ckpt": "/md127/home/UFAD/aryanthakur/eodla_translator_model/runs/pilot3/model.pt"}
+  train    200000  target (24, 24)  [0.000, 1.000]  C/E/N 45/45/10%  operands [0,189153]
+  val       10000  target (24, 24)  [0.000, 1.000]  C/E/N 44/45/11%  operands [189154,194153]
+  test      10000  target (24, 24)  [0.000, 1.000]  C/E/N 45/45/10%  operands [194154,199153]
+  GPU held: 1.31 GB
+    curves -> /md127/home/UFAD/aryanthakur/eodla_translator_model/runs/pilot3/model_curves.png
+    ep   0  loss train 0.09029 val 0.06053  val mse 0.003008  psnr 25.22  x floor   14.1  lr 5.60e-04 *
+    ep   1  loss train 0.05212 val 0.04766  val mse 0.001813  psnr 27.41  x floor    8.5  lr 1.52e-03 *
+    ep   2  loss train 0.04379 val 0.04537  val mse 0.001837  psnr 27.36  x floor    8.6  lr 2.00e-03
+    ep   3  loss train 0.03814 val 0.03602  val mse 0.000981  psnr 30.08  x floor    4.6  lr 1.98e-03 *
+    ep   4  loss train 0.03477 val 0.03394  val mse 0.000866  psnr 30.62  x floor    4.0  lr 1.93e-03 *
+    ep   5  loss train 0.03256 val 0.03165  val mse 0.000780  psnr 31.08  x floor    3.6  lr 1.85e-03 *
+    ep   6  loss train 0.03054 val 0.02730  val mse 0.000522  psnr 32.83  x floor    2.4  lr 1.74e-03 *
+    ep   8  loss train 0.02785 val 0.03465  val mse 0.001032  psnr 29.86  x floor    4.8  lr 1.45e-03
+    ep   9  loss train 0.02647 val 0.02589  val mse 0.000470  psnr 33.28  x floor    2.2  lr 1.27e-03 *
+    ep  10  loss train 0.02530 val 0.02541  val mse 0.000462  psnr 33.35  x floor    2.2  lr 1.09e-03 *
+    ep  11  loss train 0.02425 val 0.02464  val mse 0.000437  psnr 33.59  x floor    2.0  lr 9.08e-04 *
+    ep  12  loss train 0.02313 val 0.02399  val mse 0.000410  psnr 33.88  x floor    1.9  lr 7.26e-04 *
+    ep  13  loss train 0.02205 val 0.02204  val mse 0.000343  psnr 34.64  x floor    1.6  lr 5.54e-04 *
+    ep  14  loss train 0.02103 val 0.02383  val mse 0.000440  psnr 33.57  x floor    2.1  lr 3.97e-04
+    ep  16  loss train 0.01930 val 0.02040  val mse 0.000274  psnr 35.62  x floor    1.3  lr 1.50e-04 *
+    ep  17  loss train 0.01862 val 0.02019  val mse 0.000267  psnr 35.73  x floor    1.2  lr 6.75e-05 *
+    ep  18  loss train 0.01820 val 0.02004  val mse 0.000262  psnr 35.81  x floor    1.2  lr 1.70e-05 *
+    ep  19  loss train 0.01799 val 0.02000  val mse 0.000261  psnr 35.83  x floor    1.2  lr 8.03e-09 *
+    -> test mse 0.000265  psnr 35.77  1.2x floor  |  train 0.000182  gap 1.4x  |  5.21M  7.9 min
+
+======================================================================
+test MSE        0.000265   PSNR 35.77 dB
+noise floor     0.000214   -> 1.24x floor
+conv baseline   0.024730   -> 93.3x better than baseline
+train MSE       0.000182   gap 1.44x
+params 5.21M   epochs 20   8.0 min
+-> /md127/home/UFAD/aryanthakur/eodla_translator_model/runs/pilot3
+
+runs/pilot3/model.pt   resunet / convik
+  family     rows       mse     floor  x floor vs uniform
+  uniform    2470  0.000260  0.000010    25.8x       1.00
+  density    2480  0.000101  0.000005    19.6x       0.76
+  smooth     2519  0.000128  0.000005    26.0x       1.01
+  grating    2531  0.000495  0.000013    38.3x       1.49
+
+  on             uniform       density        smooth       grating
+  0-9                       0.61 (499)     1.05 (93)              
+  10-19                     0.75 (438)    1.22 (219)     0.74 (30)
+  20-29                     0.79 (337)    1.11 (414)     1.09 (68)
+  30-39       1.03 (967)                  0.98 (517)    1.51 (701)
+  40-49      0.99 (1433)                  0.96 (466)   1.50 (1625)
+  50-59        0.94 (51)    0.79 (216)    0.94 (373)     1.11 (59)
+  60-69                     0.84 (411)    1.03 (302)     0.68 (21)
+  70-81                     0.82 (572)    0.81 (135)              
+
+runs/pilot3/model.pt   resunet / convik   200000 train rows, smooth left out
+  on       train rows  train x held-out rows held-out x    gap
+  0-9            3723    11.5x           518      15.6x   1.35
+  10-19          3794    12.0x           468      19.2x   1.59
+  20-29          4236    13.1x           424      21.6x   1.65
+  30-39         70662    17.3x          1675      32.1x   1.86
+  40-49        103267    16.4x          3058      33.5x   2.04
+  50-59          5999    15.2x           326      22.1x   1.46
+  60-69          3809    11.7x           432      21.4x   1.83
+  70-81          4510    11.5x           580      20.9x   1.82
+
+runs/pilot3/model.pt   resunet / convik   32 rows per family, 8 readouts, noise-free simulator
+             -------- surrogate --------   --- ideal conv ---
+  family    kernel  sign   input  sign    kernel   input
+  uniform     0.95  0.91    0.94  0.90      0.50    0.15
+  density     0.97  0.93    0.97  0.93      0.47    0.37
+  smooth      0.97  0.93    0.97  0.92      0.48    0.49
+  grating     0.95  0.91    0.94  0.90      0.51    0.25
+ALL DONE

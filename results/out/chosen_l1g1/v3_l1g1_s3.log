@@ -1,0 +1,7 @@
+config: {"model": "resunet", "model_kw": {"base": 96}, "rep": "convikscale", "loss": "l1", "w_grad": 1.0, "lr": 0.001, "wd": 0.0001, "batch": 256, "amp": true, "clip": 1.0, "augment": false, "seed": 3, "epochs": 40, "ckpt": "/md127/home/UFAD/aryanthakur/eodla_translator_model/runs/v3_l1g1_s3/model.pt"}
+  train   2000000  target (24, 24)  [0.000, 1.000]  C/E/N 45/45/10%  operands [0,189153]
+  val       10000  target (24, 24)  [0.000, 1.000]  C/E/N 44/45/11%  operands [189154,194153]
+  test      10000  target (24, 24)  [0.000, 1.000]  C/E/N 45/45/10%  operands [194154,199153]
+  GPU held: 12.07 GB
+    curves -> /md127/home/UFAD/aryanthakur/eodla_translator_model/runs/v3_l1g1_s3/model_curves.png
+    ep   0  loss train 0.06018 val 0.04193  val mse 0.000645  psnr 31.91  x floor   64.5  lr 1.04e-04 *

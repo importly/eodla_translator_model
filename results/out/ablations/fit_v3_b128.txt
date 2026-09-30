@@ -1,0 +1,11 @@
+
+runs/v3_b128/model.pt   resunet / convikscale   200000 train rows, smooth left out
+  on       train rows  train x held-out rows held-out x    gap
+  0-9            3723   193.2x           518     234.9x   1.22
+  10-19          3794     9.4x           468       4.1x   0.43
+  20-29          4236     3.1x           424       3.9x   1.27
+  30-39         70662     4.0x          1675       6.4x   1.60
+  40-49        103267     3.8x          3058       7.3x   1.91
+  50-59          5999     3.6x           326       4.0x   1.09
+  60-69          3809     4.3x           432       4.5x   1.05
+  70-81          4510   219.7x           580     497.7x   2.27

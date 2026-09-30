@@ -1,0 +1,18 @@
+{
+ "model": "resunet",
+ "model_kw": {
+  "base": 96
+ },
+ "rep": "convikscale",
+ "loss": "l2",
+ "w_grad": 0.5,
+ "lr": 0.0005,
+ "wd": 0.0001,
+ "batch": 256,
+ "amp": true,
+ "clip": 1.0,
+ "augment": false,
+ "seed": 0,
+ "epochs": 40,
+ "ckpt": "/md127/home/UFAD/aryanthakur/eodla_translator_model/runs/v3_lr5e4/model.pt"
+}

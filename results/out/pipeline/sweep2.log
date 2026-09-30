@@ -1,0 +1,317 @@
+resuming from best_cfg: {"model": "resunet", "model_kw": {"base": 96}, "rep": "convikscale", "loss": "l2", "w_grad": 0.5, "lr": 0.002, "wd": 0.0001, "batch": 256, "amp": true, "clip": 1.0, "augment": false, "seed": 0}
+
+##############################################################################
+### stage rep  (4 of 4 runs to do, 20 ep, train_n 60000)
+##############################################################################
+  train     60000  target (24, 24)  [0.000, 1.000]  C/E/N 45/45/10%  operands [2,189149]
+  val       10000  target (24, 24)  [0.000, 1.000]  C/E/N 44/45/11%  operands [189154,194153]
+  test      10000  target (24, 24)  [0.000, 1.000]  C/E/N 45/45/10%  operands [194154,199153]
+  GPU held: 0.48 GB
+
+=== rep/conv4 ===
+    curves -> /md127/home/UFAD/aryanthakur/eodla_translator_model/runs/sweep/rep_conv4_curves.png
+    ep   0  loss train 0.05354 val 0.02322  val mse 0.003326  psnr 24.78  x floor  332.6  lr 5.61e-04 *
+    ep   1  loss train 0.02355 val 0.02099  val mse 0.002626  psnr 25.81  x floor  262.6  lr 1.52e-03 *
+    ep   2  loss train 0.01981 val 0.01633  val mse 0.001370  psnr 28.63  x floor  137.0  lr 2.00e-03 *
+    ep   4  loss train 0.01518 val 0.01314  val mse 0.000890  psnr 30.51  x floor   89.0  lr 1.93e-03 *
+    ep   5  loss train 0.01368 val 0.01255  val mse 0.000968  psnr 30.14  x floor   96.8  lr 1.85e-03
+    ep   7  loss train 0.01225 val 0.01156  val mse 0.000687  psnr 31.63  x floor   68.7  lr 1.60e-03 *
+    ep  10  loss train 0.01079 val 0.01060  val mse 0.000632  psnr 31.99  x floor   63.2  lr 1.09e-03 *
+    ep  12  loss train 0.01027 val 0.01008  val mse 0.000574  psnr 32.41  x floor   57.4  lr 7.26e-04 *
+    ep  13  loss train 0.00971 val 0.00970  val mse 0.000431  psnr 33.65  x floor   43.1  lr 5.54e-04 *
+    ep  15  loss train 0.00925 val 0.00923  val mse 0.000360  psnr 34.44  x floor   36.0  lr 2.60e-04 *
+    ep  16  loss train 0.00895 val 0.00876  val mse 0.000300  psnr 35.24  x floor   30.0  lr 1.49e-04 *
+    ep  18  loss train 0.00862 val 0.00862  val mse 0.000282  psnr 35.50  x floor   28.2  lr 1.69e-05 *
+    -> test mse 0.000282  psnr 35.50  28.2x floor  |  train 0.000261  gap 1.1x  |  11.73M  4.2 min
+
+=== rep/ik ===
+    curves -> /md127/home/UFAD/aryanthakur/eodla_translator_model/runs/sweep/rep_ik_curves.png
+    ep   0  loss train 0.10605 val 0.06460  val mse 0.013029  psnr 18.85  x floor 1302.9  lr 5.61e-04 *
+    ep   1  loss train 0.05355 val 0.05023  val mse 0.007995  psnr 20.97  x floor  799.5  lr 1.52e-03 *
+    ep   2  loss train 0.04339 val 0.04483  val mse 0.006746  psnr 21.71  x floor  674.6  lr 2.00e-03 *
+    ep   4  loss train 0.03526 val 0.03633  val mse 0.004164  psnr 23.80  x floor  416.4  lr 1.93e-03 *
+    ep   5  loss train 0.03460 val 0.03439  val mse 0.003601  psnr 24.44  x floor  360.1  lr 1.85e-03 *
+    ep   7  loss train 0.03144 val 0.03122  val mse 0.002641  psnr 25.78  x floor  264.1  lr 1.60e-03 *
+    ep  10  loss train 0.02774 val 0.02776  val mse 0.002311  psnr 26.36  x floor  231.1  lr 1.09e-03 *
+    ep  13  loss train 0.02259 val 0.02342  val mse 0.001887  psnr 27.24  x floor  188.7  lr 5.54e-04 *
+    ep  14  loss train 0.02110 val 0.02171  val mse 0.001575  psnr 28.03  x floor  157.5  lr 3.97e-04 *
+    ep  15  loss train 0.01998 val 0.02105  val mse 0.001567  psnr 28.05  x floor  156.7  lr 2.60e-04 *
+    ep  16  loss train 0.01915 val 0.01995  val mse 0.001358  psnr 28.67  x floor  135.8  lr 1.49e-04 *
+    ep  17  loss train 0.01841 val 0.01964  val mse 0.001316  psnr 28.81  x floor  131.6  lr 6.73e-05 *
+    ep  18  loss train 0.01798 val 0.01926  val mse 0.001251  psnr 29.03  x floor  125.1  lr 1.69e-05 *
+    ep  19  loss train 0.01767 val 0.01921  val mse 0.001248  psnr 29.04  x floor  124.8  lr 8.31e-09 *
+    -> test mse 0.001214  psnr 29.16  121.4x floor  |  train 0.000869  gap 1.4x  |  11.72M  4.3 min
+
+=== rep/convik ===
+    curves -> /md127/home/UFAD/aryanthakur/eodla_translator_model/runs/sweep/rep_convik_curves.png
+    ep   0  loss train 0.06256 val 0.03135  val mse 0.004564  psnr 23.41  x floor  456.4  lr 5.61e-04 *
+    ep   2  loss train 0.02107 val 0.01872  val mse 0.001841  psnr 27.35  x floor  184.1  lr 2.00e-03 *
+    ep   4  loss train 0.01686 val 0.01700  val mse 0.001696  psnr 27.71  x floor  169.6  lr 1.93e-03 *
+    ep   5  loss train 0.01564 val 0.01536  val mse 0.001341  psnr 28.72  x floor  134.1  lr 1.85e-03 *
+    ep   7  loss train 0.01391 val 0.01307  val mse 0.000808  psnr 30.92  x floor   80.8  lr 1.60e-03 *
+    ep  10  loss train 0.01210 val 0.01169  val mse 0.000621  psnr 32.07  x floor   62.1  lr 1.09e-03 *
+    ep  14  loss train 0.01042 val 0.01067  val mse 0.000523  psnr 32.81  x floor   52.3  lr 3.97e-04 *
+    ep  15  loss train 0.01007 val 0.01062  val mse 0.000500  psnr 33.01  x floor   50.0  lr 2.60e-04 *
+    ep  16  loss train 0.00987 val 0.00995  val mse 0.000412  psnr 33.85  x floor   41.2  lr 1.49e-04 *
+    ep  18  loss train 0.00943 val 0.00978  val mse 0.000393  psnr 34.06  x floor   39.3  lr 1.69e-05 *
+    -> test mse 0.000388  psnr 34.12  38.8x floor  |  train 0.000244  gap 1.6x  |  11.73M  4.2 min
+
+=== rep/convikscale ===
+    curves -> /md127/home/UFAD/aryanthakur/eodla_translator_model/runs/sweep/rep_convikscale_curves.png
+    ep   0  loss train 0.07004 val 0.03164  val mse 0.004637  psnr 23.34  x floor  463.7  lr 5.61e-04 *
+    ep   1  loss train 0.02618 val 0.02371  val mse 0.003350  psnr 24.75  x floor  335.0  lr 1.52e-03 *
+    ep   2  loss train 0.02101 val 0.01888  val mse 0.001967  psnr 27.06  x floor  196.7  lr 2.00e-03 *
+    ep   4  loss train 0.01657 val 0.01660  val mse 0.001661  psnr 27.80  x floor  166.1  lr 1.93e-03 *
+    ep   5  loss train 0.01518 val 0.01827  val mse 0.002118  psnr 26.74  x floor  211.8  lr 1.85e-03
+    ep   6  loss train 0.01471 val 0.01677  val mse 0.001642  psnr 27.85  x floor  164.2  lr 1.74e-03 *
+    ep   7  loss train 0.01386 val 0.01348  val mse 0.000869  psnr 30.61  x floor   86.9  lr 1.60e-03 *
+    ep  10  loss train 0.01223 val 0.01270  val mse 0.000839  psnr 30.76  x floor   83.9  lr 1.09e-03 *
+    ep  11  loss train 0.01162 val 0.01210  val mse 0.000827  psnr 30.83  x floor   82.7  lr 9.07e-04 *
+    ep  14  loss train 0.01047 val 0.01064  val mse 0.000521  psnr 32.83  x floor   52.1  lr 3.97e-04 *
+    ep  15  loss train 0.01004 val 0.01060  val mse 0.000495  psnr 33.06  x floor   49.5  lr 2.60e-04 *
+    ep  16  loss train 0.00974 val 0.00985  val mse 0.000398  psnr 34.01  x floor   39.8  lr 1.49e-04 *
+    ep  18  loss train 0.00927 val 0.00966  val mse 0.000375  psnr 34.27  x floor   37.5  lr 1.69e-05 *
+    ep  19  loss train 0.00914 val 0.00962  val mse 0.000370  psnr 34.32  x floor   37.0  lr 8.31e-09 *
+    -> test mse 0.000364  psnr 34.39  36.4x floor  |  train 0.000238  gap 1.6x  |  11.73M  4.2 min
+
+>>> rep winner: conv4  val mse 0.000282  test mse 0.000282  (28.2x floor)
+                 conv4  val 0.000282  test 0.000282    28.2x  gap 1.1x  11.73M  4.2 min
+           convikscale  val 0.000370  test 0.000364    36.4x  gap 1.6x  11.73M  4.2 min
+                convik  val 0.000393  test 0.000388    38.8x  gap 1.6x  11.73M  4.2 min
+                    ik  val 0.001248  test 0.001214   121.4x  gap 1.4x  11.72M  4.3 min
+
+stage minutes: {"rep": 16.9}
+total 16.9 min
+best_cfg: {"model": "resunet", "model_kw": {"base": 96}, "rep": "conv4", "loss": "l2", "w_grad": 0.5, "lr": 0.002, "wd": 0.0001, "batch": 256, "amp": true, "clip": 1.0, "augment": false, "seed": 0}
+PIPELINE DONE
+resuming from best_cfg: {"model": "resunet", "model_kw": {"base": 96}, "rep": "conv4", "loss": "l2", "w_grad": 0.5, "lr": 0.002, "wd": 0.0001, "batch": 256, "amp": true, "clip": 1.0, "augment": false, "seed": 0}
+
+##############################################################################
+### stage datascale (6 sizes to do)
+##############################################################################
+
+=== datascale/n16000 ===
+  train     16000  target (24, 24)  [0.000, 1.000]  C/E/N 45/45/10%  operands [2,189143]
+  val       10000  target (24, 24)  [0.000, 1.000]  C/E/N 44/45/11%  operands [189154,194153]
+  test      10000  target (24, 24)  [0.000, 1.000]  C/E/N 45/45/10%  operands [194154,199153]
+  GPU held: 0.22 GB
+    curves -> /md127/home/UFAD/aryanthakur/eodla_translator_model/runs/sweep/datascale_n16000_curves.png
+    ep   0  loss train 0.11398 val 0.03552  val mse 0.006979  psnr 21.56  x floor  697.9  lr 5.65e-04 *
+    ep   1  loss train 0.03412 val 0.02733  val mse 0.004049  psnr 23.93  x floor  404.9  lr 1.53e-03 *
+    ep   3  loss train 0.02348 val 0.02134  val mse 0.002700  psnr 25.69  x floor  270.0  lr 1.98e-03 *
+    ep   4  loss train 0.02134 val 0.02124  val mse 0.002568  psnr 25.90  x floor  256.8  lr 1.93e-03 *
+    ep   5  loss train 0.02076 val 0.02402  val mse 0.003745  psnr 24.27  x floor  374.5  lr 1.85e-03
+    ep   6  loss train 0.01942 val 0.01913  val mse 0.001958  psnr 27.08  x floor  195.8  lr 1.74e-03 *
+    ep   7  loss train 0.01871 val 0.01785  val mse 0.001798  psnr 27.45  x floor  179.8  lr 1.60e-03 *
+    ep   8  loss train 0.01773 val 0.01743  val mse 0.001724  psnr 27.63  x floor  172.4  lr 1.44e-03 *
+    ep   9  loss train 0.01658 val 0.01647  val mse 0.001541  psnr 28.12  x floor  154.1  lr 1.27e-03 *
+    ep  10  loss train 0.01662 val 0.01654  val mse 0.001676  psnr 27.76  x floor  167.6  lr 1.09e-03
+    ep  11  loss train 0.01545 val 0.01435  val mse 0.001017  psnr 29.93  x floor  101.7  lr 9.05e-04 *
+    ep  15  loss train 0.01303 val 0.01298  val mse 0.000801  psnr 30.96  x floor   80.1  lr 2.59e-04 *
+    ep  16  loss train 0.01274 val 0.01280  val mse 0.000740  psnr 31.31  x floor   74.0  lr 1.48e-04 *
+    ep  17  loss train 0.01238 val 0.01258  val mse 0.000705  psnr 31.52  x floor   70.5  lr 6.65e-05 *
+    ep  18  loss train 0.01224 val 0.01246  val mse 0.000677  psnr 31.70  x floor   67.7  lr 1.65e-05 *
+    ep  19  loss train 0.01208 val 0.01241  val mse 0.000668  psnr 31.75  x floor   66.8  lr 1.24e-08 *
+    -> test mse 0.000668  psnr 31.75  66.8x floor  |  train 0.000536  gap 1.2x  |  11.73M  1.4 min
+
+=== datascale/n60000 ===
+  train     60000  target (24, 24)  [0.000, 1.000]  C/E/N 45/45/10%  operands [2,189149]
+  val       10000  target (24, 24)  [0.000, 1.000]  C/E/N 44/45/11%  operands [189154,194153]
+  test      10000  target (24, 24)  [0.000, 1.000]  C/E/N 45/45/10%  operands [194154,199153]
+  GPU held: 0.48 GB
+    curves -> /md127/home/UFAD/aryanthakur/eodla_translator_model/runs/sweep/datascale_n60000_curves.png
+    ep   0  loss train 0.05354 val 0.02322  val mse 0.003326  psnr 24.78  x floor  332.6  lr 5.61e-04 *
+    ep   1  loss train 0.02355 val 0.02099  val mse 0.002626  psnr 25.81  x floor  262.6  lr 1.52e-03 *
+    ep   2  loss train 0.01981 val 0.01633  val mse 0.001370  psnr 28.63  x floor  137.0  lr 2.00e-03 *
+    ep   4  loss train 0.01518 val 0.01314  val mse 0.000890  psnr 30.51  x floor   89.0  lr 1.93e-03 *
+    ep   5  loss train 0.01368 val 0.01255  val mse 0.000968  psnr 30.14  x floor   96.8  lr 1.85e-03
+    ep   7  loss train 0.01225 val 0.01156  val mse 0.000687  psnr 31.63  x floor   68.7  lr 1.60e-03 *
+    ep  10  loss train 0.01079 val 0.01060  val mse 0.000632  psnr 31.99  x floor   63.2  lr 1.09e-03 *
+    ep  12  loss train 0.01027 val 0.01008  val mse 0.000574  psnr 32.41  x floor   57.4  lr 7.26e-04 *
+    ep  13  loss train 0.00971 val 0.00970  val mse 0.000431  psnr 33.65  x floor   43.1  lr 5.54e-04 *
+    ep  15  loss train 0.00925 val 0.00923  val mse 0.000360  psnr 34.44  x floor   36.0  lr 2.60e-04 *
+    ep  16  loss train 0.00895 val 0.00876  val mse 0.000300  psnr 35.24  x floor   30.0  lr 1.49e-04 *
+    ep  18  loss train 0.00862 val 0.00862  val mse 0.000282  psnr 35.50  x floor   28.2  lr 1.69e-05 *
+    -> test mse 0.000282  psnr 35.50  28.2x floor  |  train 0.000261  gap 1.1x  |  11.73M  4.2 min
+
+=== datascale/n150000 ===
+  train    150000  target (24, 24)  [0.000, 1.000]  C/E/N 45/45/10%  operands [0,189153]
+  val       10000  target (24, 24)  [0.000, 1.000]  C/E/N 44/45/11%  operands [189154,194153]
+  test      10000  target (24, 24)  [0.000, 1.000]  C/E/N 45/45/10%  operands [194154,199153]
+  GPU held: 1.02 GB
+    curves -> /md127/home/UFAD/aryanthakur/eodla_translator_model/runs/sweep/datascale_n150000_curves.png
+    ep   0  loss train 0.03594 val 0.01947  val mse 0.002093  psnr 26.79  x floor  209.3  lr 5.60e-04 *
+    ep   2  loss train 0.01587 val 0.01408  val mse 0.001308  psnr 28.83  x floor  130.8  lr 2.00e-03 *
+    ep   3  loss train 0.01317 val 0.01182  val mse 0.000767  psnr 31.15  x floor   76.7  lr 1.98e-03 *
+    ep   5  loss train 0.01140 val 0.01054  val mse 0.000661  psnr 31.80  x floor   66.1  lr 1.85e-03 *
+    ep   7  loss train 0.01056 val 0.01019  val mse 0.000572  psnr 32.43  x floor   57.2  lr 1.60e-03 *
+    ep   8  loss train 0.01013 val 0.00945  val mse 0.000422  psnr 33.74  x floor   42.2  lr 1.45e-03 *
+    ep  10  loss train 0.00953 val 0.01019  val mse 0.000571  psnr 32.44  x floor   57.1  lr 1.09e-03
+    ep  12  loss train 0.00887 val 0.00831  val mse 0.000280  psnr 35.53  x floor   28.0  lr 7.26e-04 *
+    ep  15  loss train 0.00807 val 0.00772  val mse 0.000230  psnr 36.38  x floor   23.0  lr 2.61e-04 *
+    ep  16  loss train 0.00779 val 0.00758  val mse 0.000227  psnr 36.43  x floor   22.7  lr 1.50e-04 *
+    ep  17  loss train 0.00761 val 0.00749  val mse 0.000213  psnr 36.71  x floor   21.3  lr 6.74e-05 *
+    ep  18  loss train 0.00748 val 0.00738  val mse 0.000200  psnr 36.98  x floor   20.0  lr 1.70e-05 *
+    -> test mse 0.000200  psnr 36.99  20.0x floor  |  train 0.000227  gap 0.9x  |  11.73M  9.7 min
+
+=== datascale/n400000 ===
+  train    400000  target (24, 24)  [0.000, 1.000]  C/E/N 45/45/10%  operands [0,189153]
+  val       10000  target (24, 24)  [0.000, 1.000]  C/E/N 44/45/11%  operands [189154,194153]
+  test      10000  target (24, 24)  [0.000, 1.000]  C/E/N 45/45/10%  operands [194154,199153]
+  GPU held: 2.51 GB
+    curves -> /md127/home/UFAD/aryanthakur/eodla_translator_model/runs/sweep/datascale_n400000_curves.png
+    ep   0  loss train 0.02469 val 0.01496  val mse 0.001271  psnr 28.96  x floor  127.1  lr 5.60e-04 *
+    ep   1  loss train 0.01330 val 0.01357  val mse 0.001117  psnr 29.52  x floor  111.7  lr 1.52e-03 *
+    ep   3  loss train 0.01572 val 0.01386  val mse 0.001007  psnr 29.97  x floor  100.7  lr 1.98e-03 *
+    ep   5  loss train 0.01130 val 0.01572  val mse 0.001504  psnr 28.23  x floor  150.4  lr 1.85e-03
+    ep   6  loss train 0.01046 val 0.01058  val mse 0.000630  psnr 32.01  x floor   63.0  lr 1.74e-03 *
+    ep   7  loss train 0.00972 val 0.00898  val mse 0.000358  psnr 34.47  x floor   35.8  lr 1.60e-03 *
+    ep   8  loss train 0.00921 val 0.00851  val mse 0.000342  psnr 34.66  x floor   34.2  lr 1.45e-03 *
+    ep  10  loss train 0.00849 val 0.00883  val mse 0.000417  psnr 33.80  x floor   41.7  lr 1.09e-03
+    ep  12  loss train 0.00785 val 0.00766  val mse 0.000307  psnr 35.13  x floor   30.7  lr 7.26e-04 *
+    ep  13  loss train 0.00761 val 0.00742  val mse 0.000251  psnr 36.00  x floor   25.1  lr 5.54e-04 *
+    ep  14  loss train 0.00736 val 0.00692  val mse 0.000187  psnr 37.29  x floor   18.7  lr 3.97e-04 *
+    ep  15  loss train 0.00713 val 0.00695  val mse 0.000203  psnr 36.93  x floor   20.3  lr 2.61e-04
+    ep  16  loss train 0.00695 val 0.00668  val mse 0.000169  psnr 37.73  x floor   16.9  lr 1.50e-04 *
+    ep  18  loss train 0.00673 val 0.00649  val mse 0.000153  psnr 38.15  x floor   15.3  lr 1.70e-05 *
+    -> test mse 0.000156  psnr 38.07  15.6x floor  |  train 0.000679  gap 0.2x  |  11.73M  25.3 min
+
+=== datascale/n1000000 ===
+  train   1000000  target (24, 24)  [0.000, 1.000]  C/E/N 45/45/10%  operands [0,189153]
+  val       10000  target (24, 24)  [0.000, 1.000]  C/E/N 44/45/11%  operands [189154,194153]
+  test      10000  target (24, 24)  [0.000, 1.000]  C/E/N 45/45/10%  operands [194154,199153]
+  GPU held: 6.10 GB
+    curves -> /md127/home/UFAD/aryanthakur/eodla_translator_model/runs/sweep/datascale_n1000000_curves.png
+    ep   0  loss train 0.01800 val 0.01071  val mse 0.000641  psnr 31.93  x floor   64.1  lr 5.60e-04 *
+    ep   5  loss train 0.11609 val 0.11521  val mse 0.043345  psnr 13.63  x floor 4334.5  lr 1.85e-03
+    ep  10  loss train 0.11607 val 0.11507  val mse 0.043234  psnr 13.64  x floor 4323.4  lr 1.09e-03
+    ep  15  loss train 0.11607 val 0.11507  val mse 0.043228  psnr 13.64  x floor 4322.8  lr 2.61e-04
+    -> test mse 0.000635  psnr 31.97  63.5x floor  |  train 0.000886  gap 0.7x  |  11.73M  62.9 min
+
+=== datascale/n2000000 ===
+  train   2000000  target (24, 24)  [0.000, 1.000]  C/E/N 45/45/10%  operands [0,189153]
+  val       10000  target (24, 24)  [0.000, 1.000]  C/E/N 44/45/11%  operands [189154,194153]
+  test      10000  target (24, 24)  [0.000, 1.000]  C/E/N 45/45/10%  operands [194154,199153]
+  GPU held: 12.07 GB
+    curves -> /md127/home/UFAD/aryanthakur/eodla_translator_model/runs/sweep/datascale_n2000000_curves.png
+    ep   0  loss train 0.01465 val 0.01047  val mse 0.000623  psnr 32.06  x floor   62.3  lr 5.60e-04 *
+    ep   1  loss train 0.00956 val 0.00820  val mse 0.000316  psnr 35.01  x floor   31.6  lr 1.52e-03 *
+    ep   2  loss train 0.00807 val 0.00729  val mse 0.000258  psnr 35.89  x floor   25.8  lr 2.00e-03 *
+    ep   3  loss train 0.00695 val 0.00655  val mse 0.000247  psnr 36.08  x floor   24.7  lr 1.98e-03 *
+    ep   4  loss train 0.00630 val 0.00560  val mse 0.000156  psnr 38.06  x floor   15.6  lr 1.93e-03 *
+    ep   5  loss train 0.00584 val 0.00537  val mse 0.000152  psnr 38.18  x floor   15.2  lr 1.85e-03 *
+    ep   6  loss train 0.00548 val 0.00521  val mse 0.000141  psnr 38.51  x floor   14.1  lr 1.74e-03 *
+    ep   7  loss train 0.00523 val 0.00499  val mse 0.000140  psnr 38.54  x floor   14.0  lr 1.60e-03 *
+    ep   9  loss train 0.00479 val 0.00440  val mse 0.000096  psnr 40.18  x floor    9.6  lr 1.27e-03 *
+    ep  10  loss train 0.00466 val 0.00446  val mse 0.000104  psnr 39.82  x floor   10.4  lr 1.09e-03
+    ep  11  loss train 0.00448 val 0.00413  val mse 0.000085  psnr 40.73  x floor    8.5  lr 9.08e-04 *
+    ep  12  loss train 0.00438 val 0.00403  val mse 0.000079  psnr 41.05  x floor    7.9  lr 7.26e-04 *
+    ep  13  loss train 0.00432 val 0.00395  val mse 0.000076  psnr 41.17  x floor    7.6  lr 5.54e-04 *
+    ep  14  loss train 0.00417 val 0.00387  val mse 0.000070  psnr 41.57  x floor    7.0  lr 3.97e-04 *
+    ep  15  loss train 0.00410 val 0.00381  val mse 0.000070  psnr 41.57  x floor    7.0  lr 2.61e-04
+    ep  16  loss train 0.00406 val 0.00377  val mse 0.000068  psnr 41.66  x floor    6.8  lr 1.50e-04 *
+    ep  17  loss train 0.00401 val 0.00369  val mse 0.000061  psnr 42.12  x floor    6.1  lr 6.75e-05 *
+    ep  19  loss train 0.00396 val 0.00365  val mse 0.000061  psnr 42.16  x floor    6.1  lr 8.00e-09 *
+    -> test mse 0.000063  psnr 42.04  6.3x floor  |  train 0.000203  gap 0.3x  |  11.73M  124.9 min
+
+>>> datascale:
+        n16000  test 0.000668    66.8x  gap 1.2x
+        n60000  test 0.000282    28.2x  gap 1.1x
+       n150000  test 0.000200    20.0x  gap 0.9x
+       n400000  test 0.000156    15.6x  gap 0.2x
+      n1000000  test 0.000635    63.5x  gap 0.7x
+      n2000000  test 0.000063     6.3x  gap 0.3x
+
+##############################################################################
+### stage final  (40 ep, all data)
+##############################################################################
+  train   2000000  target (24, 24)  [0.000, 1.000]  C/E/N 45/45/10%  operands [0,189153]
+  val       10000  target (24, 24)  [0.000, 1.000]  C/E/N 44/45/11%  operands [189154,194153]
+  test      10000  target (24, 24)  [0.000, 1.000]  C/E/N 45/45/10%  operands [194154,199153]
+  GPU held: 12.07 GB
+
+=== final/seed0 ===
+    curves -> /md127/home/UFAD/aryanthakur/eodla_translator_model/runs/final_seed0_curves.png
+    ep   0  loss train 0.01466 val 0.01258  val mse 0.001017  psnr 29.93  x floor  101.7  lr 2.09e-04 *
+    ep   1  loss train 0.00952 val 0.00892  val mse 0.000453  psnr 33.44  x floor   45.3  lr 5.60e-04 *
+    ep   2  loss train 0.00824 val 0.00817  val mse 0.000342  psnr 34.66  x floor   34.2  lr 1.04e-03 *
+    ep   3  loss train 0.00729 val 0.00678  val mse 0.000302  psnr 35.21  x floor   30.2  lr 1.52e-03 *
+    ep   4  loss train 0.00684 val 0.00615  val mse 0.000208  psnr 36.82  x floor   20.8  lr 1.87e-03 *
+    ep   6  loss train 0.08114 val 0.11521  val mse 0.043277  psnr 13.64  x floor 4327.7  lr 2.00e-03
+    ep   8  loss train 0.11607 val 0.11509  val mse 0.043238  psnr 13.64  x floor 4323.8  lr 1.96e-03
+    ep  10  loss train 0.11606 val 0.11507  val mse 0.043236  psnr 13.64  x floor 4323.6  lr 1.90e-03
+    ep  12  loss train 0.11606 val 0.11508  val mse 0.043236  psnr 13.64  x floor 4323.6  lr 1.80e-03
+    ep  14  loss train 0.11606 val 0.11507  val mse 0.043230  psnr 13.64  x floor 4323.0  lr 1.67e-03
+    ep  16  loss train 0.11606 val 0.11507  val mse 0.043229  psnr 13.64  x floor 4322.9  lr 1.53e-03
+    ep  18  loss train 0.11606 val 0.11507  val mse 0.043234  psnr 13.64  x floor 4323.4  lr 1.36e-03
+    ep  20  loss train 0.11606 val 0.11507  val mse 0.043233  psnr 13.64  x floor 4323.3  lr 1.18e-03
+    ep  22  loss train 0.11606 val 0.11507  val mse 0.043229  psnr 13.64  x floor 4322.9  lr 1.00e-03
+    ep  24  loss train 0.11606 val 0.11507  val mse 0.043228  psnr 13.64  x floor 4322.8  lr 8.16e-04
+    ep  26  loss train 0.11606 val 0.11507  val mse 0.043228  psnr 13.64  x floor 4322.8  lr 6.39e-04
+    ep  28  loss train 0.11606 val 0.11507  val mse 0.043231  psnr 13.64  x floor 4323.1  lr 4.74e-04
+    ep  30  loss train 0.11606 val 0.11508  val mse 0.043242  psnr 13.64  x floor 4324.2  lr 3.26e-04
+    ep  32  loss train 0.11605 val 0.11506  val mse 0.043228  psnr 13.64  x floor 4322.8  lr 2.02e-04
+    ep  34  loss train 0.11605 val 0.11508  val mse 0.043237  psnr 13.64  x floor 4323.7  lr 1.05e-04
+    ep  36  loss train 0.11605 val 0.11507  val mse 0.043231  psnr 13.64  x floor 4323.1  lr 3.82e-05
+    ep  38  loss train 0.11605 val 0.11508  val mse 0.043239  psnr 13.64  x floor 4323.9  lr 4.27e-06
+    -> test mse 0.000211  psnr 36.76  21.1x floor  |  train 0.000538  gap 0.4x  |  11.73M  250.6 min
+
+=== final/seed1 ===
+    curves -> /md127/home/UFAD/aryanthakur/eodla_translator_model/runs/final_seed1_curves.png
+    ep   0  loss train 0.01430 val 0.01077  val mse 0.000632  psnr 31.99  x floor   63.2  lr 2.09e-04 *
+    ep   1  loss train 0.00951 val 0.00958  val mse 0.000521  psnr 32.84  x floor   52.1  lr 5.60e-04 *
+    ep   2  loss train 0.00828 val 0.00728  val mse 0.000281  psnr 35.51  x floor   28.1  lr 1.04e-03 *
+    ep   4  loss train 0.00677 val 0.00616  val mse 0.000220  psnr 36.57  x floor   22.0  lr 1.87e-03 *
+    ep   6  loss train 0.11607 val 0.11507  val mse 0.043231  psnr 13.64  x floor 4323.1  lr 2.00e-03
+    ep   8  loss train 0.11606 val 0.11507  val mse 0.043231  psnr 13.64  x floor 4323.1  lr 1.96e-03
+    ep  10  loss train 0.11606 val 0.11507  val mse 0.043231  psnr 13.64  x floor 4323.1  lr 1.90e-03
+    ep  12  loss train 0.11606 val 0.11507  val mse 0.043231  psnr 13.64  x floor 4323.1  lr 1.80e-03
+    ep  14  loss train 0.11606 val 0.11685  val mse 0.044153  psnr 13.55  x floor 4415.3  lr 1.67e-03
+    ep  16  loss train 0.11606 val 0.11508  val mse 0.043240  psnr 13.64  x floor 4324.0  lr 1.53e-03
+    ep  18  loss train 0.11606 val 0.11507  val mse 0.043230  psnr 13.64  x floor 4323.0  lr 1.36e-03
+    ep  20  loss train 0.11606 val 0.11507  val mse 0.043231  psnr 13.64  x floor 4323.1  lr 1.18e-03
+    ep  22  loss train 0.11606 val 0.11509  val mse 0.043246  psnr 13.64  x floor 4324.6  lr 1.00e-03
+    ep  24  loss train 0.11606 val 0.11507  val mse 0.043230  psnr 13.64  x floor 4323.0  lr 8.16e-04
+    ep  26  loss train 0.11606 val 0.11507  val mse 0.043234  psnr 13.64  x floor 4323.4  lr 6.39e-04
+    ep  28  loss train 0.11606 val 0.11507  val mse 0.043230  psnr 13.64  x floor 4323.0  lr 4.74e-04
+    ep  30  loss train 0.11606 val 0.11507  val mse 0.043228  psnr 13.64  x floor 4322.8  lr 3.26e-04
+    ep  32  loss train 0.11605 val 0.11507  val mse 0.043232  psnr 13.64  x floor 4323.2  lr 2.02e-04
+    ep  34  loss train 0.11605 val 0.11507  val mse 0.043230  psnr 13.64  x floor 4323.0  lr 1.05e-04
+    ep  36  loss train 0.11605 val 0.11507  val mse 0.043228  psnr 13.64  x floor 4322.8  lr 3.82e-05
+    ep  38  loss train 0.11605 val 0.11507  val mse 0.043229  psnr 13.64  x floor 4322.9  lr 4.27e-06
+    -> test mse 0.000224  psnr 36.49  22.4x floor  |  train 0.000507  gap 0.4x  |  11.73M  246.0 min
+
+>>> final:
+    seed0  test 0.000211  psnr 36.76  21.1x floor  gap 0.4x
+    seed1  test 0.000224  psnr 36.49  22.4x floor  gap 0.4x
+
+stage minutes: {"datascale": 228.7, "final": 496.7}
+total 725.4 min
+best_cfg: {"model": "resunet", "model_kw": {"base": 96}, "rep": "conv4", "loss": "l2", "w_grad": 0.5, "lr": 0.002, "wd": 0.0001, "batch": 256, "amp": true, "clip": 1.0, "augment": false, "seed": 0}
+PIPELINE DONE
+
+runs/final_seed0.pt   resunet / conv4
+  family     rows       mse     floor  x floor vs uniform
+  uniform    2470  0.000205  0.000010    20.3x       1.00
+  density    2480  0.004081  0.000005   789.5x      38.92
+  smooth     2519  0.001196  0.000005   241.8x      11.92
+  grating    2531  0.000575  0.000013    44.5x       2.20
+
+  on             uniform       density        smooth       grating
+  0-9                     204.29 (499)   278.78 (93)              
+  10-19                    10.25 (438)   24.37 (219)   108.51 (30)
+  20-29                     2.11 (337)    1.80 (414)     1.37 (68)
+  30-39       1.11 (967)                  1.09 (517)    1.34 (701)
+  40-49      0.93 (1433)                  1.05 (466)   1.41 (1625)
+  50-59        1.03 (51)    1.17 (216)    1.16 (373)     1.21 (59)
+  60-69                     1.58 (411)    1.37 (302)     1.96 (21)
+  70-81                     1.74 (572)    1.84 (135)              
+
+runs/final_seed0.pt   resunet / conv4   32 rows per family, 8 readouts, noise-free simulator
+             -------- surrogate --------   --- ideal conv ---
+  family    kernel  sign   input  sign    kernel   input
+  uniform     0.75  0.48    0.67  0.42      0.50    0.15
+  density     0.59  0.41    0.68  0.38      0.47    0.37
+  smooth      0.73  0.49    0.66  0.37      0.48    0.49
+  grating     0.73  0.45    0.62  0.37      0.51    0.25
+ALL DONE

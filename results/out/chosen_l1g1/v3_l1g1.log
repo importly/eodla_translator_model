@@ -1,0 +1,46 @@
+config: {"model": "resunet", "model_kw": {"base": 96}, "rep": "convikscale", "loss": "l1", "w_grad": 1.0, "lr": 0.001, "wd": 0.0001, "batch": 256, "amp": true, "clip": 1.0, "augment": false, "seed": 0, "epochs": 40, "ckpt": "/md127/home/UFAD/aryanthakur/eodla_translator_model/runs/v3_l1g1/model.pt"}
+  train   2000000  target (24, 24)  [0.000, 1.000]  C/E/N 45/45/10%  operands [0,189153]
+  val       10000  target (24, 24)  [0.000, 1.000]  C/E/N 44/45/11%  operands [189154,194153]
+  test      10000  target (24, 24)  [0.000, 1.000]  C/E/N 45/45/10%  operands [194154,199153]
+  GPU held: 12.07 GB
+    curves -> /md127/home/UFAD/aryanthakur/eodla_translator_model/runs/v3_l1g1/model_curves.png
+    ep   0  loss train 0.06137 val 0.04636  val mse 0.000904  psnr 30.44  x floor   90.4  lr 1.04e-04 *
+    ep   1  loss train 0.03848 val 0.03443  val mse 0.000448  psnr 33.49  x floor   44.8  lr 2.80e-04 *
+    ep   2  loss train 0.03277 val 0.03262  val mse 0.000403  psnr 33.94  x floor   40.3  lr 5.20e-04 *
+    ep   4  loss train 0.02800 val 0.03543  val mse 0.000916  psnr 30.38  x floor   91.6  lr 9.36e-04
+    ep   6  loss train 0.02356 val 0.02634  val mse 0.000298  psnr 35.26  x floor   29.8  lr 9.98e-04 *
+    ep   7  loss train 0.02187 val 0.02042  val mse 0.000139  psnr 38.58  x floor   13.9  lr 9.91e-04 *
+    ep   8  loss train 0.02063 val 0.01972  val mse 0.000136  psnr 38.65  x floor   13.6  lr 9.81e-04 *
+    ep   9  loss train 0.02001 val 0.01890  val mse 0.000122  psnr 39.15  x floor   12.2  lr 9.66e-04 *
+    ep  10  loss train 0.01885 val 0.01985  val mse 0.000145  psnr 38.38  x floor   14.5  lr 9.48e-04
+    ep  11  loss train 0.01824 val 0.01739  val mse 0.000098  psnr 40.09  x floor    9.8  lr 9.25e-04 *
+    ep  12  loss train 0.01766 val 0.01666  val mse 0.000090  psnr 40.47  x floor    9.0  lr 8.99e-04 *
+    ep  13  loss train 0.01715 val 0.01624  val mse 0.000082  psnr 40.85  x floor    8.2  lr 8.70e-04 *
+    ep  14  loss train 0.01689 val 0.01686  val mse 0.000095  psnr 40.21  x floor    9.5  lr 8.37e-04
+    ep  15  loss train 0.01664 val 0.01533  val mse 0.000072  psnr 41.41  x floor    7.2  lr 8.01e-04 *
+    ep  16  loss train 0.01611 val 0.01609  val mse 0.000087  psnr 40.59  x floor    8.7  lr 7.63e-04
+    ep  17  loss train 0.01582 val 0.01499  val mse 0.000071  psnr 41.49  x floor    7.1  lr 7.23e-04 *
+    ep  18  loss train 0.01535 val 0.01641  val mse 0.000096  psnr 40.19  x floor    9.6  lr 6.81e-04
+    ep  20  loss train 0.01498 val 0.01424  val mse 0.000061  psnr 42.12  x floor    6.1  lr 5.92e-04 *
+    ep  22  loss train 0.01450 val 0.01541  val mse 0.000081  psnr 40.89  x floor    8.1  lr 5.00e-04
+    ep  23  loss train 0.01397 val 0.01372  val mse 0.000056  psnr 42.52  x floor    5.6  lr 4.54e-04 *
+    ep  24  loss train 0.01398 val 0.01338  val mse 0.000052  psnr 42.85  x floor    5.2  lr 4.08e-04 *
+    ep  26  loss train 0.01342 val 0.01312  val mse 0.000050  psnr 43.03  x floor    5.0  lr 3.19e-04 *
+    ep  28  loss train 0.01336 val 0.01278  val mse 0.000046  psnr 43.35  x floor    4.6  lr 2.37e-04 *
+    ep  30  loss train 0.01272 val 0.01257  val mse 0.000045  psnr 43.46  x floor    4.5  lr 1.63e-04 *
+    ep  31  loss train 0.01263 val 0.01248  val mse 0.000044  psnr 43.55  x floor    4.4  lr 1.30e-04 *
+    ep  32  loss train 0.01252 val 0.01265  val mse 0.000046  psnr 43.35  x floor    4.6  lr 1.01e-04
+    ep  33  loss train 0.01242 val 0.01234  val mse 0.000043  psnr 43.67  x floor    4.3  lr 7.49e-05 *
+    ep  34  loss train 0.01234 val 0.01226  val mse 0.000042  psnr 43.73  x floor    4.2  lr 5.24e-05 *
+    ep  36  loss train 0.01215 val 0.01220  val mse 0.000042  psnr 43.77  x floor    4.2  lr 1.91e-05 *
+    ep  37  loss train 0.01209 val 0.01219  val mse 0.000042  psnr 43.78  x floor    4.2  lr 8.52e-06 *
+    ep  38  loss train 0.01207 val 0.01217  val mse 0.000042  psnr 43.79  x floor    4.2  lr 2.14e-06 *
+    -> test mse 0.000041  psnr 43.82  4.1x floor  |  train 0.000030  gap 1.4x  |  11.73M  249.8 min
+
+======================================================================
+test MSE        0.000041   PSNR 43.82 dB
+noise floor     0.000010   -> 4.15x floor
+conv baseline   0.024730   -> 596.4x better than baseline
+train MSE       0.000030   gap 1.38x
+params 11.73M   epochs 40   249.8 min
+-> /md127/home/UFAD/aryanthakur/eodla_translator_model/runs/v3_l1g1

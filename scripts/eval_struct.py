@@ -15,6 +15,7 @@ import h5py, numpy as np, torch
 from paths import DATA
 from data import IN_CH, norm_minmax, pool_to, predict
 from models import build
+from torchmetrics.functional.image import structural_similarity_index_measure
 
 ap = argparse.ArgumentParser()
 ap.add_argument("ckpts", nargs="+")
@@ -28,6 +29,9 @@ with h5py.File(DATA / "gen_struct.h5", "r", locking=False) as f:
     fam = torch.from_numpy(d["struct_family"][f["kk"][:]]).cuda()
 ta, tb = norm_minmax(pool_to(ta, 24)), norm_minmax(pool_to(tb, 24))
 floor = ((ta - tb) ** 2).mean((-2, -1)) / 2         # two draws differ by sqrt(2) x noise
+ssim = lambda y, t: structural_similarity_index_measure(   # 7x7 window: 11 is most of 24x24
+    y[:, None], t[:, None], kernel_size=7, data_range=1.0, reduction="none")
+ceil = ssim(ta, tb)                                 # SSIM's best possible: noise alone
 
 for p in a.ckpts:
     ck = torch.load(p, map_location="cuda")
@@ -35,20 +39,22 @@ for p in a.ckpts:
     rep = cfg.get("rep", "conv")
     model = build(cfg["model"], IN_CH[rep], **cfg.get("model_kw", {})).cuda().eval()
     model.load_state_dict(ck["state_dict"])
-    se = []
+    se, ss = [], []
     with torch.no_grad():
         for s in range(0, len(ta), 512):
             y = predict(model, rep, x[s:s + 512], w[s:s + 512], conv[s:s + 512])
             se.append(((y - ta[s:s + 512]) ** 2).mean((-2, -1)))
-    mse = torch.cat(se)
+            ss.append(ssim(y, ta[s:s + 512]))
+    mse, sim = torch.cat(se), torch.cat(ss)
 
     xf = [(mse[fam == k].mean() / floor[fam == k].mean()).item() for k in range(len(names))]
     print(f"\n{p}   {cfg['model']} / {rep}")
-    print(f"  {'family':8s} {'rows':>6s} {'mse':>9s} {'floor':>9s} {'x floor':>8s} {'vs uniform':>10s}")
+    print(f"  {'family':8s} {'rows':>6s} {'mse':>9s} {'floor':>9s} {'x floor':>8s} {'vs uniform':>10s}"
+          f" {'ssim':>7s} {'ceiling':>7s}")
     for k, name in enumerate(names):
         m = fam == k
         print(f"  {name:8s} {int(m.sum()):6d} {mse[m].mean():9.6f} {floor[m].mean():9.6f} "
-              f"{xf[k]:7.1f}x {xf[k] / xf[0]:10.2f}")
+              f"{xf[k]:7.1f}x {xf[k] / xf[0]:10.2f} {sim[m].mean():7.4f} {ceil[m].mean():7.4f}")
 
     # same 'vs uniform', split by how many of the 81 kernel pixels are on (rows)
     on = (w > 0).flatten(1).sum(1)

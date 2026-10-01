@@ -17,6 +17,7 @@ import matplotlib.pyplot as plt
 
 from data import Bundle, norm_minmax, predict
 from train import run, FLOOR
+from torchmetrics.functional.image import structural_similarity_index_measure
 
 from paths import ROOT, RUNS
 
@@ -112,6 +113,17 @@ def fig_persample(model, bundle, rep, path):
 
 
 @torch.no_grad()
+def test_ssim(model, bundle, rep):
+    """Mean SSIM over the test split, in the original orientation (through predict)."""
+    s = bundle.splits["test"]
+    model.eval()
+    y = torch.cat([predict(model, rep, s["input16"][i:i + 512], s["kernel9"][i:i + 512],
+                           s["conv24"][i:i + 512]) for i in range(0, len(s["t"]), 512)])
+    return structural_similarity_index_measure(y[:, None], s["t"][:len(y), None], kernel_size=7,
+                                               data_range=1.0).item()   # 11 is most of 24x24
+
+
+@torch.no_grad()
 def conv_baseline(bundle):
     """Test MSE of handing the normalised conv back as the prediction (the no-model baseline)."""
     se = n = 0
@@ -150,6 +162,7 @@ if __name__ == "__main__":
     base = conv_baseline(b)
     floor = FLOOR
     res["conv_baseline_test_mse"] = base
+    res["test"]["ssim"] = test_ssim(model, b, rep)
     res["improvement_over_baseline"] = base / res["test"]["mse"]
 
     torch.save({"state_dict": model.state_dict(), "cfg": cfg, "metrics": res},
@@ -162,7 +175,8 @@ if __name__ == "__main__":
     m, bb = fig_persample(model, b, rep, outdir / "per_sample.png")
 
     print("\n" + "=" * 70)
-    print(f"test MSE        {res['test']['mse']:.6f}   PSNR {res['test']['psnr']:.2f} dB")
+    print(f"test MSE        {res['test']['mse']:.6f}   PSNR {res['test']['psnr']:.2f} dB   "
+          f"SSIM {res['test']['ssim']:.4f}")
     print(f"noise floor     {floor:.6f}   -> {res['test']['mse']/floor:.2f}x floor")
     print(f"conv baseline   {base:.6f}   -> {base/res['test']['mse']:.1f}x better than baseline")
     print(f"train MSE       {res['train']['mse']:.6f}   gap {res['gap_train_val']:.2f}x")

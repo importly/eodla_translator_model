@@ -7,9 +7,9 @@ dependencies = [
     "matplotlib>=3.11.1",
     "numpy>=2.5.2",
     "pillow>=12.3.0",
+    "scikit-image>=0.26.0",
     "scipy>=1.11",
     "torch==2.6.0",
-    "torchmetrics>=1.9.0",
     "torchvision==0.21.0",
     "tqdm>=4.70.0",
 ]

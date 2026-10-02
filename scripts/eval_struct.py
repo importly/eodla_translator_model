@@ -15,7 +15,7 @@ import h5py, numpy as np, torch
 from paths import DATA
 from data import IN_CH, norm_minmax, pool_to, predict
 from models import build
-from torchmetrics.functional.image import structural_similarity_index_measure
+from skimage.metrics import structural_similarity
 
 ap = argparse.ArgumentParser()
 ap.add_argument("ckpts", nargs="+")
@@ -29,8 +29,9 @@ with h5py.File(DATA / "gen_struct.h5", "r", locking=False) as f:
     fam = torch.from_numpy(d["struct_family"][f["kk"][:]]).cuda()
 ta, tb = norm_minmax(pool_to(ta, 24)), norm_minmax(pool_to(tb, 24))
 floor = ((ta - tb) ** 2).mean((-2, -1)) / 2         # two draws differ by sqrt(2) x noise
-ssim = lambda y, t: structural_similarity_index_measure(   # 7x7 window: 11 is most of 24x24
-    y[:, None], t[:, None], kernel_size=7, data_range=1.0, reduction="none")
+ssim = lambda y, t: torch.tensor(                    # per row, 7x7 window by default
+    [structural_similarity(a, b, data_range=1.0) for a, b in zip(y.cpu().numpy(), t.cpu().numpy())],
+    device=y.device)
 ceil = ssim(ta, tb)                                 # SSIM's best possible: noise alone
 
 for p in a.ckpts:

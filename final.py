@@ -3,6 +3,7 @@ artifact: checkpoint, config, metrics, and prediction figures.
 
 Usage:
     uv run python final.py --cfg out/v3_l1g1_cfg.json --tag v4 --epochs 40 [--seed 1]
+    uv run python final.py --cfg out/v3_l1g1_cfg.json --tag old_v2 --data old_v2 --no_flip
 """
 import argparse
 import json
@@ -17,9 +18,9 @@ import matplotlib.pyplot as plt
 
 from data import Bundle, norm_minmax, predict
 from train import run, FLOOR
-from torchmetrics.functional.image import structural_similarity_index_measure
+from skimage.metrics import structural_similarity
 
-from paths import ROOT, RUNS
+from paths import ROOT, RUNS, DATA
 
 INK = "#1f2933"
 MUTED = "#7b8794"
@@ -42,7 +43,7 @@ def fig_predictions(model, bundle, rep, path, n=8, seed=0):
     model.eval()
     s = bundle.splits["test"]
     x, w, conv, t = (s[c][:512] for c in ("input16", "kernel9", "conv24", "t"))
-    y = predict(model, rep, x, w, conv)
+    y = predict(model, rep, x, w, conv, flip=bundle.flip)
     g = torch.Generator().manual_seed(seed)
     idx = torch.randperm(y.shape[0], generator=g)[:n]
     rows = [("conv (input)", norm_minmax(conv)), ("predicted", y), ("target", t),
@@ -114,13 +115,14 @@ def fig_persample(model, bundle, rep, path):
 
 @torch.no_grad()
 def test_ssim(model, bundle, rep):
-    """Mean SSIM over the test split, in the original orientation (through predict)."""
+    """Mean SSIM over the test split"""
     s = bundle.splits["test"]
     model.eval()
     y = torch.cat([predict(model, rep, s["input16"][i:i + 512], s["kernel9"][i:i + 512],
-                           s["conv24"][i:i + 512]) for i in range(0, len(s["t"]), 512)])
-    return structural_similarity_index_measure(y[:, None], s["t"][:len(y), None], kernel_size=7,
-                                               data_range=1.0).item()   # 11 is most of 24x24
+                           s["conv24"][i:i + 512], flip=bundle.flip) for i in range(0, len(s["t"]), 512)])
+    t = s["t"][:len(y)].cpu().numpy()
+    return float(np.mean([structural_similarity(a, b, data_range=1.0)   # 7x7 window by default
+                          for a, b in zip(y.cpu().numpy(), t)]))
 
 
 @torch.no_grad()
@@ -140,19 +142,22 @@ if __name__ == "__main__":
     ap.add_argument("--max_train", type=int, default=None)
     ap.add_argument("--tag", type=str, default="final")
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--data", type=str, default="", help="subfolder of data/ holding gen_*.h5")
+    ap.add_argument("--no_flip", action="store_true", help="for data without the w/-w symmetry")
     args = ap.parse_args()
 
     cfg = json.load(open(ROOT / args.cfg))
     if args.epochs:
         cfg["epochs"] = args.epochs
     cfg["seed"] = args.seed
+    cfg["data"], cfg["flip"] = args.data, not args.no_flip
 
     outdir = RUNS / args.tag
     outdir.mkdir(parents=True, exist_ok=True)
     cfg["ckpt"] = str(outdir / "model.pt")     # also puts model_curves.png here
 
     print("config:", json.dumps(cfg))
-    b = Bundle(max_train=args.max_train)
+    b = Bundle(gen_dir=DATA / args.data, max_train=args.max_train, flip=cfg["flip"])
     rep = cfg["rep"]
 
     t0 = time.time()

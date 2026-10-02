@@ -78,10 +78,10 @@ def signs(x, w):
     return (sx.float() * 2 - 1).view(-1, 1, 1), (sw.float() * 2 - 1).view(-1, 1, 1)
 
 
-def predict(model, rep, x, w, conv):
+def predict(model, rep, x, w, conv, flip=True):
     """Surrogate output (B, 24, 24) for any operands: flipped to their mostly-on side,
-    then back."""
-    sx, sw = signs(x, w)
+    then back. flip=False for a model trained without flips like old dataset."""
+    sx, sw = signs(x, w) if flip else (1.0, 1.0)
     s = sx * sw
     y = model(build_input(rep, x * sx, w * sw, conv * s))[:, 0]
     return s * y + (1 - s) / 2
@@ -94,8 +94,8 @@ class Bundle:
     """Every split resident on one device."""
     COLS = ("input16", "kernel9", "conv24", "label", "ii", "kk")
 
-    def __init__(self, gen_dir=DATA, device="cuda", max_train=None, verbose=True):
-        self.device = torch.device(device)
+    def __init__(self, gen_dir=DATA, device="cuda", max_train=None, verbose=True, flip=True):
+        self.device, self.flip = torch.device(device), flip
         self.splits = {}
         for name in ("train", "val", "test"):
             cap = max_train if name == "train" else None
@@ -135,7 +135,7 @@ class Bundle:
 
     def batches(self, split, rep, batch_size=256, shuffle=False, limit=None, gen=None):
         """Yield (x, t), each row with its operands flipped to their mostly-on side and t
-        to match (`signs`); `predict` flips back.
+        to match (`signs`); `predict` flips back. Bundle(flip=False) skips the flips.
         """
         s = self.splits[split]
         n = s["t"].shape[0] if limit is None else min(limit, s["t"].shape[0])
@@ -143,7 +143,7 @@ class Bundle:
             else torch.arange(n, device=self.device)
         for p in range(0, (n // batch_size) * batch_size, batch_size):
             b = order[p:p + batch_size]
-            sx, sw = signs(s["input16"][b], s["kernel9"][b])
+            sx, sw = signs(s["input16"][b], s["kernel9"][b]) if self.flip else (1.0, 1.0)
             sg = sx * sw
             x = build_input(rep, s["input16"][b] * sx, s["kernel9"][b] * sw, s["conv24"][b] * sg)
             yield x, sg * s["t"][b] + (1 - sg) / 2

@@ -24,9 +24,9 @@ a = ap.parse_args()
 d = np.load(DATA / "operands.npz")
 names = d["struct_names"]
 with h5py.File(DATA / "gen_struct.h5", "r", locking=False) as f:
-    x, w, conv, ta, tb = (torch.from_numpy(f[c][:]).cuda()
+    x, w, conv, ta, tb = (torch.from_numpy(f[c][:]).cpu()
                           for c in ("input16", "kernel9", "conv24", "target48", "target48b"))
-    fam = torch.from_numpy(d["struct_family"][f["kk"][:]]).cuda()
+    fam = torch.from_numpy(d["struct_family"][f["kk"][:]]).cpu()
 ta, tb = norm_minmax(pool_to(ta, 24)), norm_minmax(pool_to(tb, 24))
 floor = ((ta - tb) ** 2).mean((-2, -1)) / 2         # two draws differ by sqrt(2) x noise
 ssim = lambda y, t: torch.tensor(                    # per row, 7x7 window by default
@@ -38,7 +38,7 @@ for p in a.ckpts:
     ck = torch.load(p, map_location="cpu")
     cfg = ck["cfg"]
     rep = cfg.get("rep", "conv")
-    model = build(cfg["model"], IN_CH[rep], **cfg.get("model_kw", {})).cuda().eval()
+    model = build(cfg["model"], IN_CH[rep], **cfg.get("model_kw", {})).cpu().eval()
     model.load_state_dict(ck["state_dict"])
     se, ss = [], []
     with torch.no_grad():

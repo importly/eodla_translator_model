@@ -24,13 +24,18 @@ a = ap.parse_args()
 d = np.load(DATA / "operands.npz")
 names = d["struct_names"]
 with h5py.File(DATA / "gen_struct.h5", "r", locking=False) as f:
+
+    print(f)
+    
     x, w, conv, ta, tb = (torch.from_numpy(f[c][:]).cpu()
                           for c in ("input16", "kernel9", "conv24", "target48", "target48b"))
     fam = torch.from_numpy(d["struct_family"][f["kk"][:]]).cpu()
+
+
 ta, tb = norm_minmax(pool_to(ta, 24)), norm_minmax(pool_to(tb, 24))
 floor = ((ta - tb) ** 2).mean((-2, -1)) / 2         # two draws differ by sqrt(2) x noise
-ssim = lambda y, t: torch.tensor(                    # per row, 7x7 window by default
-    [structural_similarity(a, b, data_range=1.0) for a, b in zip(y.cpu().numpy(), t.cpu().numpy())],
+ssim = lambda y, t, data: torch.tensor(                    # per row, 7x7 window by default
+    [structural_similarity(a, b, data_range=b.max()-b.min()) for a, b in zip(y.cpu().numpy(), t.cpu().numpy())],
     device=y.device)
 ceil = ssim(ta, tb)                                 # SSIM's best possible: noise alone
 

@@ -35,7 +35,7 @@ ssim = lambda y, t: torch.tensor(                    # per row, 7x7 window by de
 ceil = ssim(ta, tb)                                 # SSIM's best possible: noise alone
 
 for p in a.ckpts:
-    ck = torch.load(p, map_location="cuda")
+    ck = torch.load(p, map_location="cpu")
     cfg = ck["cfg"]
     rep = cfg.get("rep", "conv")
     model = build(cfg["model"], IN_CH[rep], **cfg.get("model_kw", {})).cuda().eval()

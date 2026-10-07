@@ -34,7 +34,7 @@ with h5py.File(DATA / "gen_struct.h5", "r", locking=False) as f:
 
 ta, tb = norm_minmax(pool_to(ta, 24)), norm_minmax(pool_to(tb, 24))
 floor = ((ta - tb) ** 2).mean((-2, -1)) / 2         # two draws differ by sqrt(2) x noise
-ssim = lambda y, t, data: torch.tensor(                    # per row, 7x7 window by default
+ssim = lambda y, t: torch.tensor(                    # per row, 7x7 window by default
     [structural_similarity(a, b, data_range=b.max()-b.min()) for a, b in zip(y.cpu().numpy(), t.cpu().numpy())],
     device=y.device)
 ceil = ssim(ta, tb)                                 # SSIM's best possible: noise alone
